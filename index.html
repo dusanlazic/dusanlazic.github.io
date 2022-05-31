@@ -1,1 +1,47 @@
-<h1>Hello world</h1>
+---
+title: Dušan Lazić — Software engineering, cybersecurity and more
+description: Personal website and blog by Dušan Lazić. Software engineering, cybersecurity and more. Documenting learning process, writting about projects, learning experiences, hackathon experiences, cybersec writeups, more cybersecurity stuff and so on.
+---
+<link rel="stylesheet" href="assets/css/cursor.css">
+<section class="hero is-fullheight is-dark has-background">
+  <div class="ascii-art is-unselectable animate__animated animate__fadeIn" data-nosnippet>
+    {% include ascii-art %}
+  </div>
+  <div class="hero-body">
+    <div class="container is-max-widescreen">
+      <div class="columns">
+        <div class="column has-text-centered-mobile">
+          <p class="subtitle is-family-monospace is-size-2">
+            <span class="has-text-white" id="countdown"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+var end = new Date("Jul 1, 2022 00:00:00 GMT+0000").getTime();
+var timer = document.getElementById("countdown");
+
+function updateCountdown() {
+  let now = new Date().getTime();
+
+  let distance = end - now;
+
+  if (distance < 0) {
+    // Spoilers ahead!
+    timer.getElementById("countdown").innerHTML = "🎉🔄"
+    return;
+  }
+
+  let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  timer.innerHTML = ('0'  + days).slice(-2) + ":" + ('0'  + hours).slice(-2) + ":" + ('0'  + minutes).slice(-2) + ":" + ('0'  + seconds).slice(-2);
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+</script>

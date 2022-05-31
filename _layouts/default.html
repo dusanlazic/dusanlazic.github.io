@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }}</title>
+  {% seo title=false %}
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/inkpot.css">
+  <script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script>
+  <link rel="stylesheet" href="/assets/css/animate-reduced.css" />
+  <link href="/assets/node_modules/aos/dist/aos.css" rel="stylesheet">
+  <script src="/assets/node_modules/aos/dist/aos.js"></script>
+  <script src="/assets/node_modules/moment/moment.js"></script>
+  <noscript>
+      <style type="text/css">
+          [data-aos] {
+            transform: translate(0) scale(1) !important;
+            
+            -webkit-animation-duration:1s;
+            animation-duration:1s;
+            -webkit-animation-duration:var(--animate-duration);
+            animation-duration:var(--animate-duration);
+            -webkit-animation-fill-mode:both;
+            animation-fill-mode:both;
+
+            -webkit-animation-name:fadeIn;
+            animation-name:fadeIn;
+          }
+      </style>
+  </noscript>
+</head>
+<body>
+  <script>
+    AOS.init({
+      once: true,
+      duration: 600
+    });
+  </script>
+  {{ content }}
+</body>
+
+</html>

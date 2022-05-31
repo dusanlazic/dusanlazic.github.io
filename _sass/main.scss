@@ -1,0 +1,341 @@
+@charset "utf-8";
+
+/*        brand colors        */
+$green: #181f21;
+$green-dark: #111618;
+$green-light: #1c2628;
+$orange: #ef4006;
+$orange-transparent: rgba(239, 64, 6, 0.2);
+$orange-dark: #bf3305;
+$white: hsl(0, 0%, 90%);
+
+/*        primary colors        */
+$primary: $orange;
+$primary-invert: $white;
+$dark: $green;
+$dark-invert: $white;
+$light: $white;
+$info-dark: $green-light;
+$success: #38b000;
+
+/*        shades        */
+$black: hsl(0, 0%, 4%);
+$black-bis: hsl(0, 0%, 7%);
+$black-ter: hsl(0, 0%, 14%);
+$grey-darker: hsla(0, 0%, 100%, 0.1);
+$grey-dark: hsla(0, 0%, 100%, 0.3);
+$grey: hsl(0, 0%, 48%);
+$grey-light: hsla(0, 0%, 93%, 0.7);
+$grey-lighter: hsla(0, 0%, 93%, 0.8);
+$grey-lightest: hsla(0, 0%, 93%, 0.9);
+$white-ter: hsl(0, 0%, 96%);
+$white-bis: hsl(0, 0%, 98%);
+
+/*        dark scheme        */
+$scheme-main: $green-dark;
+
+/*        page and text colors        */
+$body-background-color: $green;
+$text: $grey-light;
+$text-light: $grey-lighter;
+$text-strong: $grey-lightest;
+$link: $orange;
+$link-hover: $orange-dark;
+
+/*        fonts        */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&display=swap');
+
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300;
+  src: local(''),
+       url('../fonts/SpaceGrotesk-Light.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/SpaceGrotesk-Light.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/SpaceGrotesk-Light.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+       url('../fonts/SpaceGrotesk-Regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/SpaceGrotesk-Regular.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/SpaceGrotesk-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  src: local(''),
+       url('../fonts/SpaceGrotesk-Medium.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/SpaceGrotesk-Medium.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/SpaceGrotesk-Medium.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  src: local(''),
+       url('../fonts/SpaceGrotesk-SemiBold.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/SpaceGrotesk-SemiBold.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/SpaceGrotesk-SemiBold.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  src: local(''),
+       url('../fonts/SpaceGrotesk-Bold.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/SpaceGrotesk-Bold.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/SpaceGrotesk-Bold.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+$family-secondary: 'Space Grotesk', serif;
+$family-code: 'Fira Code', monospace;
+$family-monospace: 'Fira Code', monospace;
+
+/*        page variables        */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  // enable Space Grotesk typeface features
+  font-feature-settings: "case", "ss02", "ss03", "ss04";
+
+  // push footer to the bottom
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+::selection {
+  background: $orange-dark;
+  color: $primary-invert;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+/*        navbar        */
+.navbar
+{
+    &.is-dark.is-transparent-overlay
+    {
+        background-color: transparent;
+        background-image: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+    }
+}
+
+$navbar-item-color: rgba(255, 255, 255, 0.6) !important;
+$navbar-item-active-color: $white !important;
+$navbar-item-active-background-color: rgba(0,0,0,0) !important;
+$navbar-item-hover-color: $white !important;
+$navbar-item-hover-background-color: rgba(0,0,0,0) !important;
+
+/*        tags        */
+.tag.is-light-transparent {
+    background-color: rgba(0,0,0,0);
+    border: 1px solid $grey-dark;
+    color: $white;
+}
+
+.tag.is-light-transparent:hover {
+    background-color: $orange;
+    border: 1px solid $orange;
+    color: $white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.tag.is-light-transparent.active {
+  border: 1px solid $orange;
+  color: $white;
+  text-decoration: none;
+}
+
+.tag.is-skill {
+    background-color: $green;
+    border: 1px solid $grey-dark;
+    color: $white;
+}
+
+/*        hero        */
+.hero.has-background {
+  position: relative;
+  overflow: hidden;
+}
+
+/*        ascii art        */
+.ascii-art {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  white-space: pre;
+  font-family: "Fira Code", monospace;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+@media screen and (max-width: 768px) {
+  .ascii-art {
+    top: 0px;
+    font-size: xx-small !important; 
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .ascii-art {
+    font-size: 0.75rem !important; 
+  }
+}
+
+/*        highlight        */
+.underline-highlight {
+  -webkit-box-shadow:inset 0 -6px 0 $orange-transparent;
+  box-shadow:inset 0 -6px 0 $orange-transparent;
+}
+
+/*        icons        */
+a.is-icon {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+a.is-icon:hover {
+    color: $primary-invert !important;
+}
+
+a.is-icon.hackthebox:hover {
+    color: #9FEF00 !important;
+}
+
+a.is-icon.linkedin:hover {
+    color: #2867b2 !important;
+}
+
+a.is-icon.bugcrowd:hover {
+    color: #f26822 !important;
+}
+
+/*        content        */
+@media screen and (max-width: 768px) {
+  .content.is-perfect { 
+    font-size: 1rem; 
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .content.is-perfect { 
+    font-size: 1.125rem; 
+  }
+}
+
+code {
+  border-radius: 4px;
+}
+
+/*        copy button        */
+pre {
+  position: relative;
+}
+
+pre > .button {
+  opacity: 0;
+  transition: opacity .1s ease-out;
+    -moz-transition: opacity .1s ease-out;
+    -webkit-transition: opacity .1s ease-out;
+    -o-transition: opacity .1s ease-out;
+  position: absolute !important;
+  top: 12px !important;
+  right: 10px !important;
+}
+
+pre:hover > .button {
+  opacity: 1;
+}
+
+$code: $grey-lighter;
+$code-background: $green-dark;
+
+$content-blockquote-background-color: transparent;
+$content-blockquote-border-left: 3px solid $link;
+$contett-blockquote-border-radius: 0px;
+
+/*        table        */
+$table-color: $grey-light;
+$table-background-color: transparent;
+$table-body-background-color: transparent;
+$table-cell-border: none;
+$table-row-hover-background-color: $green-light;
+
+/*        list        */
+$list-color: $grey-light;
+$list-item-description-color: $grey-dark;
+$list-item-divider-color: $green-light;
+$list-item-hover-color: $green-light;
+
+/*        sidebar        */
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 2em;
+}
+
+.fixed {
+  position: fixed;
+  bottom: 15px;
+}
+
+.is-opaque-on-hover {
+  opacity: .6;
+  transition: opacity .3s ease-out;
+    -moz-transition: opacity .3s ease-out;
+    -webkit-transition: opacity .3s ease-out;
+    -o-transition: opacity .3s ease-out;
+}
+
+.is-opaque-on-hover:hover {
+  opacity: 1;
+}
+
+img.is-bio {
+  padding: 4px;
+  border: 1px solid $grey-dark;
+}
+
+img.is-bio:hover {
+  padding: 4px;
+  border: 1px solid $grey;
+}
+
+/*        tab switching        */
+.tab {
+  display: none;
+}
+
+.tab.active {
+  display: block;
+}
+
+/*        invert columns       */
+@media screen and (max-width: 768px) {
+  .columns.is-reversed-mobile {
+    flex-direction: column-reverse;
+    display: flex;
+  }
+}
+
+@import "../assets/node_modules/bulma/bulma.sass";
