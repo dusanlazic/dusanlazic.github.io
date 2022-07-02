@@ -59,16 +59,15 @@ defaults:
       type: "pages"
     values:
       layout: default
-  -
-    scope:
-      path: "/assets/**"
-    values:
-      sitemap: false
 
 # Build settings
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-sitemap
+
+sass:
+  style: compressed
 
 # Exclude from processing.
 # The following items will not be processed, by default.

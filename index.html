@@ -8,40 +8,28 @@ description: Personal website and blog by Dušan Lazić. Software engineering, c
     {% include ascii-art %}
   </div>
   <div class="hero-body">
-    <div class="container is-max-widescreen">
-      <div class="columns">
-        <div class="column has-text-centered-mobile">
-          <p class="subtitle is-family-monospace is-size-2">
-            <span class="has-text-white" id="countdown"></span>
-          </p>
-        </div>
+    <div class="container is-max-widescreen has-text-centered-mobile">
+        <p class="subtitle is-family-monospace is-size-3">
+          <span class="has-text-white" id="command"></span><span class="blink has-background-white is-hidden"
+            id="cursor">&nbsp;</span>
+        </p>
       </div>
     </div>
   </div>
 </section>
 <script>
-var end = new Date("Jul 1, 2022 00:00:00 GMT+0200").getTime();
-var timer = document.getElementById("countdown");
+  var i = 0;
+  var text = 'almost ready';
+  var delay = 100;
 
-function updateCountdown() {
-  let now = new Date().getTime();
-
-  let distance = end - now;
-
-  if (distance < 0) {
-    // Spoilers ahead!
-    timer.getElementById("countdown").innerHTML = "🎉🔄"
-    return;
+  function addLetter() {
+    if (i < text.length) {
+      document.getElementById("command").innerHTML += text.charAt(i);
+      i++;
+      setTimeout(addLetter, delay);
+    }
   }
 
-  let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-  timer.innerHTML = ('0'  + days).slice(-2) + ":" + ('0'  + hours).slice(-2) + ":" + ('0'  + minutes).slice(-2) + ":" + ('0'  + seconds).slice(-2);
-}
-
-updateCountdown();
-setInterval(updateCountdown, 1000);
+  document.getElementById("cursor").classList.toggle("is-hidden");
+  setTimeout(addLetter, 1000);
 </script>

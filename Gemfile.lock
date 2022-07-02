@@ -14,7 +14,7 @@ GEM
       execjs
     coffee-script-source (1.11.1)
     colorator (1.1.0)
-    commonmarker (0.23.4)
+    commonmarker (0.23.5)
     concurrent-ruby (1.1.10)
     dnsruby (1.61.9)
       simpleidn (~> 0.1)
@@ -245,10 +245,13 @@ GEM
       ethon (>= 0.9.0)
     tzinfo (1.2.9)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2022.1)
+      tzinfo (>= 1.0.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
     unicode-display_width (1.8.0)
+    wdm (0.1.1)
     webrick (1.7.0)
     zeitwerk (2.5.4)
 
@@ -256,14 +259,16 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  github-pages (~> 226)
+  github-pages
   http_parser.rb (~> 0.6.0)
-  jekyll-feed (~> 0.12)
-  jekyll-seo-tag
+  jekyll-feed (~> 0.6)
+  jekyll-seo-tag (~> 2.8.0)
+  jekyll-sitemap (~> 1.4.0)
+  kramdown-parser-gfm
   tzinfo (~> 1.2)
   tzinfo-data
-  wdm (~> 0.1.1)
-  webrick
+  wdm (~> 0.1.0)
+  webrick (~> 1.7)
 
 BUNDLED WITH
    2.2.3
