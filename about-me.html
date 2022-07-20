@@ -1,0 +1,68 @@
+---
+title: About me — Dušan Lazić
+description: My name is Dušan. I am a 3rd year Software Engineering and Information Technologies student at the Faculty of Technical Sciences, University of Novi Sad.
+active_page: about-me
+---
+<section class="section has-background-info-dark">
+  <div class="container is-max-widescreen" data-aos="fade-in">
+    <div class="columns is-reversed-mobile mt-6">
+      <div class="column is-8">
+        <div class="content is-perfect has-text-justified">
+          <h2 class="title is-size-1 is-size-2-mobile is-family-secondary mt-4 mb-6">Hello world! <span class="has-text-weight-normal">👋🏼</span></h2>
+          {% capture about_me %}
+My name is Dušan. I am a **3rd** year **Software Engineering and Information Technologies** student at the **Faculty of Technical Sciences, 
+University of Novi Sad**. 
+
+I am mostly interested in cybersecurity and backend development, but I seek knowledge in many different areas in IT.
+I am passionate about Linux, shell scripting, administration and other cool things, so I have recently started getting into DevOps.
+
+This blog was made for practice, fun, and for documenting my learning process. I will write about whatever I find interesting and valuable, 
+such as CTF writeups, my projects, learning experiences, and more.
+
+When not hacking, I play the guitar, surf the internet or go bowling with friends. 
+Also, I am in love with [80s music](https://youtu.be/uxX2gA18grk){:target="_blank"}. 🎷
+
+{% endcapture %}
+          {{ about_me | markdownify }}
+        </div>
+        <div class="pt-4 has-text-centered-mobile">
+          <a href="/Dusan-Lazic-Resume.pdf" rel="noopener noreferrer" alt="Download résumé" target="_blank" class="button is-primary">
+            Résumé&nbsp;
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="is-size-5" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>
+          </a>
+          <a href="/blog" class="button is-primary is-outlined ml-3">
+            Read my blog&nbsp;
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="is-size-5" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="m12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg>
+          </a>
+        </div>
+      </div>
+      <div class="column">
+        <figure class="image is-2by3 is-hidden-mobile" alt="Dušan Lazić portrait photo, 2022">
+          <img src="/assets/img/photo2by3.webp" alt="Dušan Lazić portrait photo, 2022">
+        </figure>
+        <figure class="image is-square is-hidden-tablet" alt="Dušan Lazić portrait photo, 2022">
+          <img class="is-rounded" src="/assets/img/photo1by1.webp" alt="Dušan Lazić portrait photo, 2022">
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="Contact" class="hero is-medium">
+  <div class="hero-body">
+    <div class="container is-max-widescreen has-text-centered" data-aos="fade-in">
+      <div class="content is-perfect">
+        <h2 class="title is-size-1 is-size-2-mobile is-family-secondary">Let's get in touch 📫</h2>
+        {% capture contact_info %}
+You can email me at **lazic dusan 1104** at **gmail** dot **com**.
+
+If you want to send me a message securely, here is my [PGP key](/dusanlazic.asc).
+
+I am also on [GitHub](https://github.com/dusanlazic) and
+[LinkedIn](https://www.linkedin.com/in/lazic-dusan/).
+{% endcapture %}
+        {{ contact_info | markdownify }}
+      </div>
+    </div>
+  </div>
+</section>
+{% include footer.html %}

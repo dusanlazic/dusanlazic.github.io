@@ -4,7 +4,7 @@
 $green: #181f21;
 $green-dark: #111618;
 $green-light: #1c2628;
-$orange: #ef4006;
+$orange: #fb4b13;
 $orange-transparent: rgba(239, 64, 6, 0.2);
 $orange-dark: #bf3305;
 $white: hsl(0, 0%, 90%);
@@ -125,10 +125,8 @@ body {
 }
 
 /*        navbar        */
-.navbar
-{
-    &.is-dark.is-transparent-overlay
-    {
+.navbar {
+    &.is-dark.is-transparent-overlay {
         background-color: transparent;
         background-image: none;
         position: absolute;
@@ -136,6 +134,11 @@ body {
         right: 0;
         top: 0;
     }
+}
+
+.navbar-burger.is-right {
+  margin-right: 0;
+  margin-left: auto;
 }
 
 $navbar-item-color: rgba(255, 255, 255, 0.6) !important;
@@ -150,8 +153,18 @@ $navbar-item-hover-background-color: rgba(0,0,0,0) !important;
   color: $white;
 }
 
-.tag.is-custom.border {
-  border: 1px solid $grey-dark;
+.tag.is-custom.light {
+  background-color: $green-light;
+}
+
+.tag.is-custom.orange {
+  background-color: $orange-transparent;
+}
+
+.tag.is-custom.orange:hover {
+  background-color: $orange-dark;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .tag.is-custom:hover {
