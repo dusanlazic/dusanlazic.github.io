@@ -1,0 +1,35 @@
+<nav class="navbar is-dark is-transparent-overlay">
+  <div class="container is-max-widescreen">
+    <div class="navbar-brand is-family-monospace">
+      <a class="navbar-item" href="/" aria-label="Home">
+        {% include logo.svg %}
+      </a>
+      
+      <a role="button" class="navbar-burger is-right" id="burger" aria-label="menu" aria-expanded="false">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div class="navbar-menu" id="menu">
+      <div class="navbar-end is-family-monospace">
+        <a class="navbar-item {% if page.active_page == 'about-me' %}is-active{% endif %}" href="/about-me">
+          /about-me
+        </a>
+        <a class="navbar-item {% if page.active_page == 'blog' %}is-active{% endif %}"
+          href="/blog">
+          /blog
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+<script>
+  const burger = document.getElementById("burger");
+  const menu = document.getElementById("menu");
+
+  burger.addEventListener('click', () => {
+    menu.classList.toggle("is-active");
+    burger.classList.toggle("is-active");
+  })
+</script>

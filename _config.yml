@@ -28,7 +28,7 @@ github_username:  dusanlazic
 author:
   name: Dušan Lazić
   url: https://lazicdusan.com
-  picture: /assets/img/myself.jpeg
+  picture: /assets/img/photo2by3.webp
 
 social:
   name: Dušan Lazić
@@ -59,16 +59,15 @@ defaults:
       type: "pages"
     values:
       layout: default
-  -
-    scope:
-      path: "/assets/**"
-    values:
-      sitemap: false
 
 # Build settings
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-sitemap
+
+sass:
+  style: compressed
 
 # Exclude from processing.
 # The following items will not be processed, by default.

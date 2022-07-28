@@ -1,0 +1,82 @@
+---
+title: Blog — Dušan Lazić
+description:  Personal website and blog by Dušan Lazić. Software engineering, cybersecurity and more. Documenting learning process, writting about projects, learning experiences, hackathon experiences, cybersec writeups, more cybersecurity stuff and so on.
+active_page: blog
+---
+<header class="hero is-dark has-background-info-dark pt-6">
+  <div class="hero-body">
+    <div class="container is-max-widescreen animate__animated animate__fadeIn">
+      <h3 class="is-size-4 mb-2">
+        Categories
+        <a href="/blog#" id="clear-categories" class="is-icon">
+          <span class="iconify-inline mr-2" data-icon="ic:baseline-filter-alt-off"></span>
+        </a>
+      </h3>
+      <div style="line-height: 2.3;">
+        {% for category in site.categories %}
+        {% capture category_name %}{{ category | first }}{% endcapture %}
+        <a href="/blog#{{ category_name | slugize }}" id="collection-{{ category_name | slugize }}" class="tag is-medium is-custom" data-collection-name="{{ category_name }}">{{ category_name }}&nbsp;&nbsp;<b>{{ category[1].size }}</b></a>
+        {% endfor %}
+      </div>
+      
+      <h3 class="is-size-4 mb-2 mt-4">
+        Tags
+        <a href="/blog#" id="clear-tags" class="is-icon">
+          <span class="iconify-inline mr-2" data-icon="ic:baseline-filter-alt-off"></span>
+        </a>
+      </h3>
+      <div style="line-height: 2.3;">
+        {% for tag in site.tags %}
+        {% capture tag_name %}{{ tag | first }}{% endcapture %}
+        <a href="/blog#{{ tag_name | slugize }}" id="collection-{{ tag_name | slugize }}" class="tag is-medium is-custom" data-collection-name="{{ tag_name }}">{{ tag_name }}&nbsp;&nbsp;<b>{{ tag[1].size }}</b></a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</header>
+<section class="section has-background-dark">
+  <div class="container is-max-widescreen">
+    <div id="tab-all" class="tab active animate__animated animate__fadeIn">
+      <p class="title is-family-secondary is-size-2 is-size-3-mobile mb-4">
+        All posts<span class="has-text-primary ml-4">{{ site.posts.size }}</span>
+      </p>
+      {% for post in site.posts %}
+      {% include single-post.html %}
+      {% endfor %}
+    </div>
+
+    {% for category in site.categories %}
+      {% capture category_name %}{{ category | first }}{% endcapture %}
+      <div id="tab-{{ category_name | slugize }}" class="tab active animate__animated animate__fadeIn">
+        <hr class="line" id="{{ category_name | slugize }}">
+        <p class="title is-family-secondary is-size-2 is-size-3-mobile mb-4" data-collection-name="{{ category_name }}">
+          {{ category_name }}<span class="has-text-primary ml-4">{{ category[1].size }}</span>
+        </p>
+        {% for post in site.categories[category_name] %}
+        {% include single-post.html %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    {% for tag in site.tags %}
+      {% capture tag_name %}{{ tag | first }}{% endcapture %}
+      <div id="tab-{{ tag_name | slugize }}" class="tab active animate__animated animate__fadeIn">
+        <hr class="line" id="{{ tag_name | slugize }}">
+        <p class="title is-family-secondary is-size-2 is-size-3-mobile mb-4" data-collection-name="{{ tag_name }}">
+          {{ tag_name }}<span class="has-text-primary ml-4">{{ tag[1].size }}</span>
+        </p>
+        {% for post in site.tags[tag_name] %}
+        {% include single-post.html %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="container has-text-centered mt-5">
+      <p class="has-text-grey is-family-monospace" alt="End of results!">\x00</p>
+    </div>
+  </div>
+</section>
+{% include footer.html %}
+<script src="/assets/js/blog.js"></script>
+<script src="/assets/js/dates.js"></script>
+<script src="/assets/js/icons.js"></script>

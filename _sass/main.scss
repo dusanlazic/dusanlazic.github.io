@@ -4,7 +4,7 @@
 $green: #181f21;
 $green-dark: #111618;
 $green-light: #1c2628;
-$orange: #ef4006;
+$orange: #fb4b13;
 $orange-transparent: rgba(239, 64, 6, 0.2);
 $orange-dark: #bf3305;
 $white: hsl(0, 0%, 90%);
@@ -126,10 +126,8 @@ body {
 }
 
 /*        navbar        */
-.navbar
-{
-    &.is-dark.is-transparent-overlay
-    {
+.navbar {
+    &.is-dark.is-transparent-overlay {
         background-color: transparent;
         background-image: none;
         position: absolute;
@@ -139,6 +137,11 @@ body {
     }
 }
 
+.navbar-burger.is-right {
+  margin-right: 0;
+  margin-left: auto;
+}
+
 $navbar-item-color: rgba(255, 255, 255, 0.6) !important;
 $navbar-item-active-color: $white !important;
 $navbar-item-active-background-color: rgba(0,0,0,0) !important;
@@ -146,22 +149,34 @@ $navbar-item-hover-color: $white !important;
 $navbar-item-hover-background-color: rgba(0,0,0,0) !important;
 
 /*        tags        */
-.tag.is-light-transparent {
-    background-color: rgba(0,0,0,0);
-    border: 1px solid $grey-dark;
-    color: $white;
+.tag.is-custom {
+  background-color: $green;
+  color: $white;
 }
 
-.tag.is-light-transparent:hover {
-    background-color: $orange;
-    border: 1px solid $orange;
-    color: $white;
-    cursor: pointer;
-    text-decoration: none;
+.tag.is-custom.light {
+  background-color: $green-light;
 }
 
-.tag.is-light-transparent.active {
-  border: 1px solid $orange;
+.tag.is-custom.orange {
+  background-color: $orange-transparent;
+}
+
+.tag.is-custom.orange:hover {
+  background-color: $orange-dark;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tag.is-custom:hover {
+  background-color: $green-dark;
+  color: $white;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tag.is-custom.active {
+  background-color: $green-dark;
   color: $white;
   text-decoration: none;
 }
@@ -236,11 +251,19 @@ a.is-icon.bugcrowd:hover {
   .content.is-perfect { 
     font-size: 1rem; 
   }
+
+  pre > code {
+    font-size: 9pt !important;
+  }
 }
 
 @media screen and (min-width: 769px) {
   .content.is-perfect { 
     font-size: 1.125rem; 
+  }
+
+  pre > code {
+    font-size: 10pt !important;
   }
 }
 
@@ -331,6 +354,48 @@ img.is-bio:hover {
   display: block;
 }
 
+.single-post {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  background-color: transparent;
+  transition: background-color .3s;
+    -moz-transition: background-color .3s;
+    -webkit-transition: background-color .3s;
+    -o-transition: background-color .3s;
+}
+
+.single-post p {
+  transition: color .3s;
+    -moz-transition: color .3s;
+    -webkit-transition: color .3s;
+    -o-transition: color .3s;
+}
+
+.single-post .read {
+  opacity: 0;
+  transition: opacity .1s;
+    -moz-transition: opacity .1s;
+    -webkit-transition: opacity .1s;
+    -o-transition: opacity .1s;
+}
+
+.single-post:hover {
+  background-color: hsla(0, 0%, 0%, 0.21);
+}
+
+
+.single-post:hover p {
+  color: $white !important;
+}
+
+.single-post:hover .read {
+  opacity: 1;
+}
+
+.line {
+  background-color: #273437;
+}
+
 /*        invert columns       */
 @media screen and (max-width: 768px) {
   .columns.is-reversed-mobile {
@@ -339,4 +404,21 @@ img.is-bio:hover {
   }
 }
 
-@import "../assets/node_modules/bulma/bulma.sass";
+.button {
+  padding-left: 1em !important;
+  padding-right: 1em !important;
+}
+
+@import "bulma/sass/base/_all.sass";
+@import "bulma/sass/components/navbar.sass";
+@import "bulma/sass/elements/button.sass";
+@import "bulma/sass/elements/container.sass";
+@import "bulma/sass/elements/content.sass";
+@import "bulma/sass/elements/image.sass";
+@import "bulma/sass/elements/table.sass";
+@import "bulma/sass/elements/tag.sass";
+@import "bulma/sass/elements/title.sass";
+@import "bulma/sass/grid/_all.sass";
+@import "bulma/sass/helpers/_all.sass";
+@import "bulma/sass/layout/_all.sass";
+@import "bulma/sass/utilities/_all.sass";

