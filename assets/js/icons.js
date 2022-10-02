@@ -6,7 +6,8 @@ var iconDict = {
     "CTF": "ic:baseline-flag",
     "Cryptography": "ic:baseline-vpn-key",
     "Jekyll": "simple-icons:jekyll",
-    "SCC 2022": "ic:baseline-flag"
+    "SCC 2022": "ic:baseline-flag",
+    "CSAW 2022": "ic:baseline-flag"
 }
 
 function setIcons() {
