@@ -75,7 +75,7 @@ Since I had 99 text files, I played with the text manipulation tools and got thi
 cat * | awk '{$1=$1;print length, $0}' | sort -n | cut -d' ' -f2- | uniq
 ```
 
-This command trims leading and trailing whitespace from every line, sorts the lines by length and removes the duplicates. What is left is convinient for visual inspection.
+This command trims leading and trailing whitespace from every line, sorts the lines by length and removes the duplicates. What is left is convenient for visual inspection.
 
 ```
 ...
