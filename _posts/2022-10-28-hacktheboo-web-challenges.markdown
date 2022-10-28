@@ -43,7 +43,7 @@ To determine how the flag can be returned, I searched for "flag" in the root dir
 
 The flag does not appear in the source code at all, which means I have to make the app read the flag. Dockerfile tells us the flag is located at `/flag.txt`.
 
-I visited `http://localhost:1337` in FireFox and I opened the Network tab in DevTools to monitor the requests. It's a halloween themed memory game!
+I visited `http://localhost:1337` in Firefox and I opened the Network tab in DevTools to monitor the requests. It's a halloween themed memory game!
 
 ![](/uploads/{{ page.permalink }}/ss3.png)
 
@@ -162,7 +162,7 @@ Another day, another Flask application that returns no flag.
 
 ![](/uploads/{{ page.permalink }}/ss6.png)
 
-I opened it in FireFox and there was this cool page.
+I opened it in Firefox and there was this cool page.
 
 ![](/uploads/{{ page.permalink }}/ss7.png)
 
@@ -271,7 +271,7 @@ And finally, it's displayed on `/dashboard`:
 
 So my goal was to login as an admin.
 
-I opened FireFox and there was this login page.
+I opened Firefox and there was this login page.
 
 ![](/uploads/{{ page.permalink }}/ss14.png)
 
@@ -495,7 +495,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY 'M@k3l@R!d3s$';
 FLUSH PRIVILEGES;
 ```
 
-I opened the app in FireFox and there was this website about (not so) spooky pumpkin facts. 
+I opened the app in Firefox and there was this website about (not so) spooky pumpkin facts. 
 
 ![](/uploads/{{ page.permalink }}/ss20.png)
 
