@@ -44,8 +44,8 @@ defaults:
     values:
       image:
         path: /assets/img/cards/default.png
-        height: 1200
-        width: 630
+        height: 630
+        width: 1200
   -
     scope:
       path: ""
