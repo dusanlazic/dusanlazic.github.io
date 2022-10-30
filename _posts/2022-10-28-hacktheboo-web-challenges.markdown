@@ -706,7 +706,7 @@ There are many ways to hit your own endpoint, here are some basic examples:
 ```html
 <img src="https://lazicdusan.com"/>
 <script src="https://lazicdusan.com"/></script>
-<link rel=attachment href="https://lazicdusan.com"></scripts>
+<link rel=attachment href="https://lazicdusan.com">
 ```
 
 I also recommend this article on hacktricks.xyz: [Server Side XSS (Dynamic PDF)](https://book.hacktricks.xyz/pentesting-web/xss-cross-site-scripting/server-side-xss-dynamic-pdf){:target="_blank"}
