@@ -267,7 +267,7 @@ And finally, it's displayed on `/dashboard`:
 
 ... if the current user is the admin:
 
-```html{% raw %}{% if user == 'admin' %}{% endraw %}```
+```{% raw %}{% if user == 'admin' %}{% endraw %}```
 
 So my goal was to login as an admin.
 
@@ -540,7 +540,7 @@ And another table depicting loose comparisons with `==`.
 
 I kept that potential SSRF in mind and I started searching for a type juggling vulnerability in the code. I started with the variables I could control, which is the `type` field.
 
-One part of the code that drew my attention was this switch case.
+One part of the code that drew my attention was this switch statement.
 
 ```php
 switch ($jsondata['type'])
