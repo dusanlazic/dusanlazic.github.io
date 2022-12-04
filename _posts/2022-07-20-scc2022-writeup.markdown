@@ -1,5 +1,5 @@
 ---
-title:  "Serbian Cybersecurity Challenge 2022 — Writeup"
+title:  "Serbian Cybersecurity Challenge 2022 🇷🇸 — Writeup"
 description: "This is my writeup for the first phase of the Serbian Cybersecurity Challenge 2022. It was held online on the Avatao platform. SCC2022 was the first CTF competition I've ever participated in."
 categories: ['Writeup']
 tags: ['SCC 2022', 'CTF']
