@@ -59,7 +59,7 @@ At the bottom of the apply form, there is a file upload field.
 
 File upload vulnerabilities are common in CTFs, so I opened the page source to take a look at how the form is submitted.
 
-I scolled down and I found a hyperlink that could be interesting. It looks like a download link that takes a filename as a query parameter. If that is the case, there is a possibility of a LFI (local file inclusion).
+I scrolled down and I found a hyperlink that could be interesting. It looks like a download link that takes a filename as a query parameter. If that is the case, there is a possibility of a LFI (local file inclusion).
 
 ![](/uploads/{{ page.permalink }}/ss9.png)
 
