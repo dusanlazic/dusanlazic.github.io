@@ -13,7 +13,7 @@ image:
 
 I participated as a member of the team [**CyberHero**](https://ctftime.org/team/130070/){:target="_blank"}. We solved 25/39 challenges, and out of ~1000 teams, we placed **27th**. 🎉
 
-One challenge remained unsolved, and some were solved by my teammates. In this writeup I will go through the ones that I have solved:
+In the web category, one challenge remained unsolved, and some were solved by my teammates. In this writeup I will go through the ones that I have solved:
 - [outdated](#outdated)
 - [pay-to-win](#pay-to-win)
 - [back-to-the-past](#back-to-the-past)
