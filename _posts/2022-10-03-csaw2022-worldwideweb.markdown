@@ -2,7 +2,7 @@
 title:  "CSAW 2022 — World Wide Web Writeup"
 description: "Writeup for an easy web challange on the CSAW 2022 CTF."
 categories: ['Writeup']
-tags: ['CSAW 2022', 'CTF']
+tags: ['CTF']
 permalink: csaw-2022-world-wide-web-writeup
 read_time: 5
 date: 2022-10-03 01:30 +0200
