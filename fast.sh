@@ -10,13 +10,13 @@ if ! type pip > /dev/null 2>&1; then
 fi
 
 echo "Getting Fast..."
-if ! git clone --depth 1 -q https://github.com/dusanlazic/fast.git; then
+if ! git clone --depth 1 -q https://github.com/dusanlazic/fast.git fastsource; then
   echo "Failed to clone Fast."
   exit 1
 fi
 
 echo "Installing Fast..."
-if pip install -q fast/; then
+if pip install -qe fastsource/; then
   echo "Fast successfully installed."
   pip show fast | grep Version
 else
