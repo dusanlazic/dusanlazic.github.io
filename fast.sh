@@ -24,7 +24,6 @@ else
   exit 1
 fi
 
-rm -rf fast/
 echo "Installation complete. Good luck! 🍀"
 
 exit 0
