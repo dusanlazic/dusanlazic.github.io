@@ -7,6 +7,8 @@ var iconDict = {
     "Cryptography": "ic:baseline-vpn-key",
     "Jekyll": "simple-icons:jekyll",
     "Serbian Cybersecurity Challenge": "ic:baseline-flag",
+    "ECSC": "game-icons:european-flag",
+    "A/D": "ic:baseline-flag",
 }
 
 function setIcons() {
