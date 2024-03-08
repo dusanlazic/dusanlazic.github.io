@@ -6,17 +6,13 @@ active_page: about-me
 <section class="section has-background-info-dark">
   <div class="container is-max-widescreen" data-aos="fade-in">
     <div class="columns is-reversed-mobile mt-6">
-      <div class="column is-8">
+      <div class="column is-8 is-flex is-flex-direction-column is-justify-content-space-between">
         <div class="content is-perfect has-text-justified">
           <h2 class="title is-size-1 is-size-2-mobile is-family-secondary mt-4 mb-6">Hello world! <span class="has-text-weight-normal">👋🏼</span></h2>
           {% capture about_me %}
-My name is Dušan. I am a master **Software Engineering and Information Technologies** student at the **Faculty of Technical Sciences, 
-University of Novi Sad**.
+My name is Dušan. I am a master's student in **Software Engineering**, a **DevOps engineer** and a **cybersecurity enthusiast**.
 
-Passionate about cybersecurity, DevOps, and backend development. Playing CTFs is my sport, and ECSC is my Champions League; produly represented Serbia 🇷🇸 twice in a row. I also enjoy automating everything, seeing green ticks on CI/CD, and just making things work in general.
-
-This blog is made for practice, fun, and for documenting my learning process. I will write about whatever I find interesting and valuable, 
-such as CTF writeups, my projects, learning experiences, and more.
+I enjoy playing with Linux, AWS, Terraform, Docker, Kubernetes, CI/CD, and many other tools to keep things running smoothly, secure, and make development easier. Hacking is my sport and I actively engage in CTF competitions — I represented Serbia 🇷🇸 on multiple international cybersecurity competitions, including European Cyber Security Challenge. Currently, I am pursuing Certified Penetration Testing Specialist (CPTS) certification. 📚
 
 When not hacking, I play the guitar, watch old movies and pretend to be a DJ.
 Also, I am in love with [80s music](https://youtu.be/uxX2gA18grk){:target="_blank"}. 🎷
@@ -24,7 +20,7 @@ Also, I am in love with [80s music](https://youtu.be/uxX2gA18grk){:target="_blan
 {% endcapture %}
           {{ about_me | markdownify }}
         </div>
-        <div class="pt-4 has-text-centered-mobile">
+        <div class="has-text-centered-mobile">
           <div class="columns">
             <div class="column is-8">
               <a href="/Dusan-Lazic-Resume.pdf" rel="noopener noreferrer" alt="Download résumé" target="_blank" class="button is-primary">
