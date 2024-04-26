@@ -1,0 +1,529 @@
+---
+title:  "SCC 2024 Quals 🇷🇸 — My Challenges Writeup"
+description: "Writeup for Neglegentia, Ecology, See in the Dark web challenges, and slaga1337za misc challenge on the Serbian Cybersecurity Challenge 2024 qualifications."
+categories: ['Writeup']
+tags: ['Serbian Cybersecurity Challenge', 'CTF']
+permalink: serbian-cybersecurity-challenge-2024-quals-writeup
+read_time: 14
+date: 2024-04-26 00:20 +0200
+image:
+  path: /assets/img/cards/tjctf-2023-web-challenges-writeup.png
+---
+
+This year's SCC qualification phase was particularly fun for me, as I had the chance to experience the competition from the other side — I participated in creating the challenges! It was very exciting to observe how participants approach and tackle the challenges that I made. In this post, I'll present my challenges and their solutions, but first, let's start with a brief introduction to the competition. 🙌
+
+> If you want, you can also [jump](#challenge-sources) straight to the challenges.
+
+**Serbian Cybersecurity Challenge** is an annual national cybersecurity competition organized by **Cyber Hero** program under the [Cyber Security Network Foundation](https://sajberbezbednost.rs/){:target="_blank"}. The competition is in CTF jeopardy format and consists of two phases: an online qualification round for individuals typically held in March, and the final round for teams held on-site in May. The best performing individuals during both phases are invited to the Serbian national team to participate in another annual competition, [European Cyber Security Challenge](https://ecsc2024.it/){:target="_blank"}.
+
+This year, members of the last year's (2023) Serbian national team team were invited to create the challenges for the qualification round. All 10 members of the team have built total of 38 challenges in 7 categories: web, forensics, osint, miscellaneous, reverse engineering, cryptography and binary exploitation.
+
+![](/uploads/{{ page.permalink }}/national-team.webp)
+
+This is our team in Hamar, Norway during the ECSC 2023. You can easily spot me — I am the one that blinked. However, my ECSC experience deserves its own post. 😁
+
+The first phase of the **Serbian Cybersecurity Challenge 2024** was held online on the [CTFd platform](https://ctfd.io/){:target="_blank"} over the weekend of **23-24 March 2024**. All students from higher education institutions, high school students in the territory of the Republic of Serbia, as well as citizens of the Republic of Serbia, were eligible to participate. The final phase will be held on-site in Belgrade on **14th of May 2024**.
+
+
+# Challenge sources
+
+During the time I was writing this post, the challenges were still available at [scc2024.sajberheroj.rs](https://scc2024.sajberheroj.rs/){:target="_blank"}. Since that won't last forever, you can get the source code of my challenges on my [public git repository](){:target="_blank"}. Each challenge specifies what was intented for the competitors to download and review, everything else should be hidden. It is recommended not to read the actual source code while solving the challenges to avoid spoilers and preserve the authentic SCC experience. 😉
+
+# Writeups
+
+## Neglegentia — web, 51 solves
+
+> **Difficulty** : Easy
+>
+> **Description** : Our most skilled social engineer managed to access notorious hackers' private network (he stole their WPA2 password), register his own account on their custom chat platform and steal the source code. Since you are our most skilled hacker, he gave you the credentials (`johmdoe:password123`) and the source code. Your mission is to get our flag back. Those chats may be hiding something ...
+> 
+> 🐳 Instance
+>
+> 📦 web_neglegentia.zip
+
+Let's start with the challenge with the most solves by navigating to the challenge website.
+
+![](/uploads/{{ page.permalink }}/ss1.png)
+
+We see a login page. Before attempting anything else, we can try with the provided credentials from the description: `johmdoe:password123`.
+
+![](/uploads/{{ page.permalink }}/ss2.png)
+
+That did work and we got redirected to a page that looks like a chat app. 
+
+![](/uploads/{{ page.permalink }}/ss3.png)
+
+There is a single conversation with a user named "danger0us". In this chat we can see how our ethical hacker managed to get some privileged user danger0us to send us the source code of the app. Also, those suspicions of intrusion should explain why we cannot send new messages (the pain of running a web challenge on a shared instance).
+
+Indeed, the challenge does include a file named `web_neglegentia.zip`. Let's explore it.
+
+```
+neglegentia/
+├── source
+│   ├── database.js
+│   ├── index.js
+│   ├── middleware
+│   │   └── index.js
+│   ├── package.json
+│   ├── public
+│   │   ├── chat.css
+│   │   ├── chat.js
+│   │   └── styles.css
+│   ├── routes
+│   │   └── index.js
+│   ├── util.js
+│   └── views
+│       ├── chat.ejs
+│       └── index.ejs
+└── web_neglegentia.zip
+```
+
+We can see that the app is written in Node and it has a typical structure of a small Node app.
+
+By exploring the code we can see SQL injections **everywhere** in `database.js`, you can see for yourself.
+
+```js
+const sqlite = require('sqlite-async');
+const { generateUUID } = require('./util');
+
+class Database {
+    constructor(db_file) {
+        this.db_file = db_file;
+        this.db = undefined;
+    }
+
+    async connect() {
+        this.db = await sqlite.open(this.db_file);
+    }
+
+    async getUserByUsername(username) {
+        return this.db.get(`SELECT * FROM users WHERE username = '${username}'`);
+    }
+
+    async getUserById(id) {
+        return this.db.get(`SELECT * FROM users WHERE id = '${id}'`);
+    }
+
+    async registerUser(username, password) {
+        const userId = generateUUID();
+        this.db.exec(`INSERT INTO USERS (id, username, password) VALUES ('${userId}', '${username}', '${password}');`);
+        return userId;
+    }
+
+    async getUserInbox(username) {
+        const messages = await this.db.all(`
+            SELECT m.*, u1.username AS senderUsername, u2.username AS receiverUsername
+            FROM messages m
+            JOIN users u1 ON m.sender_id = u1.id
+            JOIN users u2 ON m.receiver_id = u2.id
+            WHERE senderUsername = '${username}' OR receiverUsername = '${username}'
+            ORDER BY m.timestamp ASC`);
+
+        return messages.reduce((acc, message) => {
+            const otherUserUsername = message.senderUsername === username ? message.receiverUsername : message.senderUsername;
+            const messageType = message.senderUsername === username ? 'sent' : 'received';
+
+            if (!acc[otherUserUsername] && otherUserUsername !== username) {
+                acc[otherUserUsername] = [];
+            }
+
+            acc[otherUserUsername].push({
+                type: messageType,
+                content: message.message
+            });
+
+            return acc;
+        }, {});
+    }
+
+    async persistMessage(senderId, receiverId, message) {
+        this.db.exec(`INSERT INTO messages (sender_id, receiver_id, message) VALUES ('${senderId}', '${receiverId}', '${message}');`);
+    }
+
+    async migrate() {
+        const sql = `
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS messages (
+                id INT PRIMARY KEY,
+                sender_id TEXT NOT NULL,
+                receiver_id TEXT NOT NULL,
+                message TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (sender_id) REFERENCES users(id),
+                FOREIGN KEY (receiver_id) REFERENCES users(id)
+            );`;
+
+        return this.db.exec(sql);
+    }
+}
+
+module.exports = Database;
+```
+
+For any of those flaws to be exploitable, we need to be able to pass our **user input** to those queries. Let's examine each of them.
+
+### 1. `getUserByUsername`
+
+Reading `routes/index.js` file reveals that this function is called only during user login.
+
+```js
+// ...
+router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!/^[a-zA-Z0-9]+$/.test(username)) {
+        return res.status(401).send({ error: 'Hacking attempt!!!!' });
+    }
+
+    if (!username || !password) {
+        return res.status(400).send({ error: 'Please provide username and password.' });
+    }
+
+    try {
+        const user = await db.getUserByUsername(username);
+// ...
+```
+
+Unfortunately, there is some input validation based on regex making us unable to perform SQL injection attack. Even though that code in `database.js` is an awful practice, this particular vulnerability is patched. It's still awful though.
+
+### 2. `registerUser`, `persistMessage`
+
+These two functions are used only in unreachable parts of the code which makes them useless for us.
+
+### 3. `getUserById`, `getUserInbox`
+
+These two functions are used in the function that fetches messages.
+
+```js
+// ...
+router.get('/messages', authMiddleware, async (req, res) => {
+    try {
+        const user = await db.getUserById(req.userId);
+        const messages = await db.getUserInbox(user.username);
+        res.json({ messages });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({ error: 'Server error. Try again later.' });
+    }
+});
+// ...
+```
+
+At first glance, there is no user input passed, but there is still more to explore.
+
+This endpoint uses `authMiddleware`, let's read it.
+
+Reading `middleware/index.js` reveals where `req.userId` property comes from.
+
+```js
+const jwt = require('jsonwebtoken');
+
+const authMiddleware = (req, res, next) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(401).send({ error: 'No token provided.' });
+    }
+
+    try {
+        decoded = jwt.decode(token);
+        req.userId = decoded.sub;
+        next();
+    } catch (error) {
+        return res.status(401).send({ error: 'Invalid token' });
+    }
+};
+
+module.exports = {
+    authMiddleware
+};
+```
+
+That property is set and read from a JWT token stored in a cookie, but in a way that breaks authentication. Instead of **verifying** the token's signature, this code is only **decoding** the token, and it will decode any JSON that we provide. 
+
+```js
+decoded = jwt.decode(token);
+```
+
+This function was included in the library [documentation](https://www.npmjs.com/package/jsonwebtoken){:target="_blank"} with a warning that says that the signature is not being verified, and you should use `jwt.verify` instead. In the latest versions, it's just ommited from the docs.
+
+![](/uploads/{{ page.permalink }}/ss4.png)
+
+Now we know that we can simply change the payload of our JWT token using [jwt.io](https://jwt.io){:target="_blank"}. We should be able to modify `sub` field to another user's ID and takeover their account.
+
+![](/uploads/{{ page.permalink }}/ss5.png)
+
+We see that the user IDs are in UUID format. 
+
+> If the IDs were integers, we could assume that they are not randomly generated and try some of the following:
+> - set the ID to 0 or 1 since that may be the ID of an admin account
+> - obtain other users' account IDs through API and takeover their accounts
+> - try incrementing or decrementing IDs to takeover random accounts
+> - brute force IDs
+
+Due to the unpredictable nature of UUIDs, we cannot guess other user's UUID that easily. Also, exploring the routes show that no endpoint returns user IDs, so we cannot discover them either.
+
+Anyway, `sub` field gets passed to a query vulnerable to SQL injection, so we can takeover someone's account just by their username instead.
+
+```js
+async getUserById(id) {
+    return this.db.get(`SELECT * FROM users WHERE id = '${id}'`);
+}
+```
+
+If we pass `doesntexist' OR username = 'danger0us' -- -`, the resulting SQL query would be:
+
+```sql
+SELECT * FROM users WHERE id = 'doesntexist' OR username = 'danger0us' -- -'
+```
+
+Sounds good, let's test it out.
+
+![](/uploads/{{ page.permalink }}/ss6.png)
+
+Update the cookie using developer tools.
+
+![](/uploads/{{ page.permalink }}/ss7.png)
+
+![](/uploads/{{ page.permalink }}/ss8.png)
+
+Here we go, now we are on the other side of the conversation. Also, there is a new user called gh0st. Let's see what gh0st has to say.
+
+![](/uploads/{{ page.permalink }}/ss9.png)
+
+We don't know who that gh0st user is, but we can easily repeat the process above with their username and explore further.
+
+Set `sub` to `doesntexist' OR username = 'gh0st' -- -` and move on.
+
+![](/uploads/{{ page.permalink }}/ss10.png)
+
+Two new usernames, byt3b3nd3r and cr4ck3rb0y. Let's go with byt3b3nd3r first.
+
+![](/uploads/{{ page.permalink }}/ss11.png)
+
+After a few hops between accounts and conversations, we find our flag right here. 🚩
+
+## slaga1337za — misc, 44 solves
+
+> **Difficulty** : Easy
+>
+> **Description** : "Slaga1337za" is quite similar to a well-known TV show that has been airing since 1993. Well, our version has been running since January 1st 1970! Try to guess the correct password before the time runs out.
+> 
+> 🐳 Instance
+>
+
+Upon connecting to the instance via netcat, we see some rules about the game and a password prompt.
+
+![](/uploads/{{ page.permalink }}/ss12.png)
+
+We need to guess a password that consists of 16 lowercase ascii letters, and we have 30 seconds to guess it. Let's try it out.
+
+![](/uploads/{{ page.permalink }}/ss13.png)
+
+This output resembles "Skočko" game from a Serbian TV show [Slagalica](https://en.wikipedia.org/wiki/TV_Slagalica){:target="_blank"}. If you are not familiar with Skočko, [Wordle](https://www.nytimes.com/games/wordle/index.html){:target="_blank"} is another game similar to this challenge. We can deduce that a yellow circle indicates a correct letter in the incorrect position, while a red circle indicates a correct letter in the correct position. Unlike Skočko and Wordle, we are limited only by time, not by the number of attempts.
+
+One strategy may be to begin with guessing the first letter by cycling through every alphabet character. Once the first letter is correctly identified (shown by a single red circle), we proceed to guess the second letter, and continue in this manner. With each correct guess, our known sequence expands, and we only need to change the subsequent letter until the entire password is correctly guessed.
+
+![](/uploads/{{ page.permalink }}/ss14.png)
+
+Clearly, this is too much work to be done in under 30 seconds, which is why we need automation. 🦾
+
+Since char-by-char leaks are a common thing, I have this template for automating similar attacks.
+
+```python
+alphabet = ""
+secret = ""
+
+
+def secret_found(candidate) -> bool:
+    """
+    Check if the whole secret matches the candidate.
+    """
+    pass
+
+
+def characters_match(candidate) -> bool:
+    """
+    Check if the given characters match the beginning of the secret.
+    """
+    pass
+
+
+while not secret_found(secret):
+    for c in alphabet:
+        candidate = secret + c
+        if characters_match(candidate):
+            secret = candidate
+            print(secret)
+            break
+    else:
+        print(
+            "Could not find the next character."
+            + "It is either not in the alphabet or it does not exist in the secret."
+        )
+        break
+```
+
+First of all, we need to talk to the service programmatically, and we will do it using pwntools.
+
+```py
+from pwn import *
+
+conn = remote("<IP>", 3735)
+```
+
+Next, we need to define how to determine if the correct password starts with our supplied string. We do that by submitting the characters and checking if the service responds with an equal amount of red circles.
+
+```py
+def characters_match(candidate) -> bool:
+    """
+    Check if the given characters match the beginning of the secret.
+    """
+    conn.recvuntil(b"Password: ")
+    conn.sendline(candidate.encode())
+    response = conn.recvline().decode()
+    return response[len(candidate) - 1] == "🔴"
+```
+
+> If the password is `khbndkhvhoipybab` and we submit `khbnd` we will get:
+>
+> `🔴🔴🔴🔴🔴⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫`. 
+>
+> If we submit `khbnda` we will get:
+>
+> `🔴🔴🔴🔴🔴🟡⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫`
+
+
+We also need a way to tell if we got the correct password. Since this check if performed only after `characters_match` is true, we just need to check if it's 16 characters long.
+
+```py
+def secret_found(secret) -> bool:
+    """
+    Check if the whole secret matches the candidate.
+    """
+    return len(secret) == 16
+```
+
+Additionally, we can cycle through the alphabet once to eliminate all the characters that are not in the password to make the search faster.
+
+```py
+min_alphabet = ""
+for c in alphabet:
+    conn.recvuntil(b"Password: ")
+    conn.sendline(c.encode())
+    response = conn.recvline().decode()
+    if response[0] != "⚫":
+        min_alphabet += c
+        info(min_alphabet)
+success(min_alphabet)
+```
+
+Finally, here is our script.
+
+```py
+from pwn import *
+import string
+
+alphabet = string.ascii_lowercase
+secret = ""
+conn = remote("127.0.0.1", 3735)
+
+
+def secret_found(secret) -> bool:
+    """
+    Check if the whole secret matches the candidate.
+    """
+    return len(secret) == 16
+
+
+def characters_match(candidate) -> bool:
+    """
+    Check if the given characters match the beginning of the secret.
+    """
+    conn.recvuntil(b"Password: ")
+    conn.sendline(candidate.encode())
+    response = conn.recvline().decode()
+    return response[len(candidate) - 1] == "🔴"
+
+
+# Find characters that appear in the password. This step is optional and makes the search faster.
+
+min_alphabet = ""
+for c in alphabet:
+    conn.recvuntil(b"Password: ")
+    conn.sendline(c.encode())
+    response = conn.recvline().decode()
+    if response[0] != "⚫":
+        min_alphabet += c
+        info(min_alphabet)
+success(min_alphabet)
+
+# Brute force the secret character by character.
+
+while not secret_found(secret):
+    for c in min_alphabet:
+        candidate = secret + c
+        if characters_match(candidate):
+            secret = candidate
+            info(secret)
+            break
+    else:
+        warn(
+            "Could not find the next character. It is either not in the alphabet or it does not exist in the secret."
+        )
+        break
+
+# If found, submit the secret.
+
+if secret_found(secret):
+    conn.sendline(secret.encode())
+    success(conn.recvall().decode())
+else:
+    conn.close()
+```
+
+Run the script and watch. 🍿🍿🍿
+
+```py
+[+] Opening connection to 127.0.0.1 on port 3735: Done
+[*] a
+[*] ac
+[*] ace
+[*] aceh
+[*] acehj
+[*] acehjl
+[*] acehjln
+[*] acehjlnq
+[*] acehjlnqr
+[*] acehjlnqrv
+[*] acehjlnqrvw
+[+] acehjlnqrvw
+[*] n
+[*] nw
+[*] nwa
+[*] nwac
+[*] nwace
+[*] nwacen
+[*] nwacenq
+[*] nwacenqr
+[*] nwacenqrw
+[*] nwacenqrwr
+[*] nwacenqrwrn
+[*] nwacenqrwrnj
+[*] nwacenqrwrnjl
+[*] nwacenqrwrnjlv
+[*] nwacenqrwrnjlvh
+[*] nwacenqrwrnjlvhr
+[+] Receiving all data: Done (34B)
+[*] Closed connection to 127.0.0.1 port 3735
+[+] SCC{tr3f_k4r0_tr3f_pWn}
+```
+
+## Ecology — web, 27 solves
+
+## See in the Dark — web, 2 solves
