@@ -51,9 +51,12 @@ $link-hover: $orange-dark;
   font-style: normal;
   font-weight: 300;
   src: local(''),
-       url('../fonts/SpaceGrotesk-Light.woff2') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/SpaceGrotesk-Light.woff') format('woff'), /* Modern Browsers */
-       url('../fonts/SpaceGrotesk-Light.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/SpaceGrotesk-Light.woff2') format('woff2'),
+    /* Super Modern Browsers */
+    url('../fonts/SpaceGrotesk-Light.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/SpaceGrotesk-Light.ttf') format('truetype'),
+    /* Safari, Android, iOS */
 }
 
 @font-face {
@@ -61,9 +64,12 @@ $link-hover: $orange-dark;
   font-style: normal;
   font-weight: 400;
   src: local(''),
-       url('../fonts/SpaceGrotesk-Regular.woff2') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/SpaceGrotesk-Regular.woff') format('woff'), /* Modern Browsers */
-       url('../fonts/SpaceGrotesk-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/SpaceGrotesk-Regular.woff2') format('woff2'),
+    /* Super Modern Browsers */
+    url('../fonts/SpaceGrotesk-Regular.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/SpaceGrotesk-Regular.ttf') format('truetype'),
+    /* Safari, Android, iOS */
 }
 
 @font-face {
@@ -71,9 +77,12 @@ $link-hover: $orange-dark;
   font-style: normal;
   font-weight: 500;
   src: local(''),
-       url('../fonts/SpaceGrotesk-Medium.woff2') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/SpaceGrotesk-Medium.woff') format('woff'), /* Modern Browsers */
-       url('../fonts/SpaceGrotesk-Medium.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/SpaceGrotesk-Medium.woff2') format('woff2'),
+    /* Super Modern Browsers */
+    url('../fonts/SpaceGrotesk-Medium.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/SpaceGrotesk-Medium.ttf') format('truetype'),
+    /* Safari, Android, iOS */
 }
 
 @font-face {
@@ -81,9 +90,12 @@ $link-hover: $orange-dark;
   font-style: normal;
   font-weight: 600;
   src: local(''),
-       url('../fonts/SpaceGrotesk-SemiBold.woff2') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/SpaceGrotesk-SemiBold.woff') format('woff'), /* Modern Browsers */
-       url('../fonts/SpaceGrotesk-SemiBold.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/SpaceGrotesk-SemiBold.woff2') format('woff2'),
+    /* Super Modern Browsers */
+    url('../fonts/SpaceGrotesk-SemiBold.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/SpaceGrotesk-SemiBold.ttf') format('truetype'),
+    /* Safari, Android, iOS */
 }
 
 @font-face {
@@ -91,12 +103,15 @@ $link-hover: $orange-dark;
   font-style: normal;
   font-weight: 700;
   src: local(''),
-       url('../fonts/SpaceGrotesk-Bold.woff2') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/SpaceGrotesk-Bold.woff') format('woff'), /* Modern Browsers */
-       url('../fonts/SpaceGrotesk-Bold.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/SpaceGrotesk-Bold.woff2') format('woff2'),
+    /* Super Modern Browsers */
+    url('../fonts/SpaceGrotesk-Bold.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/SpaceGrotesk-Bold.ttf') format('truetype'),
+    /* Safari, Android, iOS */
 }
 
-$family-sans-serif:  BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+$family-sans-serif: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 $family-secondary: 'Space Grotesk', serif;
 $family-code: 'Fira Code', monospace;
 $family-monospace: 'Fira Code', monospace;
@@ -127,14 +142,14 @@ body {
 
 /*        navbar        */
 .navbar {
-    &.is-dark.is-transparent-overlay {
-        background-color: transparent;
-        background-image: none;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-    }
+  &.is-dark.is-transparent-overlay {
+    background-color: transparent;
+    background-image: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
 }
 
 .navbar-burger.is-right {
@@ -144,9 +159,9 @@ body {
 
 $navbar-item-color: rgba(255, 255, 255, 0.6) !important;
 $navbar-item-active-color: $white !important;
-$navbar-item-active-background-color: rgba(0,0,0,0) !important;
+$navbar-item-active-background-color: rgba(0, 0, 0, 0) !important;
 $navbar-item-hover-color: $white !important;
-$navbar-item-hover-background-color: rgba(0,0,0,0) !important;
+$navbar-item-hover-background-color: rgba(0, 0, 0, 0) !important;
 
 /*        tags        */
 .tag.is-custom {
@@ -182,9 +197,9 @@ $navbar-item-hover-background-color: rgba(0,0,0,0) !important;
 }
 
 .tag.is-skill {
-    background-color: $green;
-    border: 1px solid $grey-dark;
-    color: $white;
+  background-color: $green;
+  border: 1px solid $grey-dark;
+  color: $white;
 }
 
 /*        hero        */
@@ -204,65 +219,54 @@ $navbar-item-hover-background-color: rgba(0,0,0,0) !important;
   font-family: "Fira Code", monospace;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.15);
-}
-
-@media screen and (max-width: 768px) {
-  .ascii-art {
-    top: 0px;
-    font-size: xx-small !important; 
-  }
-}
-
-@media screen and (min-width: 769px) {
-  .ascii-art {
-    font-size: 0.75rem !important; 
-  }
+  top: calc(100 / (62 * 1.4) * 5 * -1vh) !important;
+  font-size: calc(100 / (62 * 1.4) * 1.1 * 1vh) !important;
 }
 
 /*        highlight        */
 .underline-highlight {
-  -webkit-box-shadow:inset 0 -6px 0 $orange-transparent;
-  box-shadow:inset 0 -6px 0 $orange-transparent;
+  -webkit-box-shadow: inset 0 -6px 0 $orange-transparent;
+  box-shadow: inset 0 -6px 0 $orange-transparent;
 }
 
 /*        icons        */
 a.is-icon {
-    color: rgba(255, 255, 255, 0.4) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 
 a.is-icon:hover {
-    color: $primary-invert !important;
+  color: $primary-invert !important;
 }
 
 a.is-icon.hackthebox:hover {
-    color: #9FEF00 !important;
+  color: #9FEF00 !important;
 }
 
 a.is-icon.linkedin:hover {
-    color: #2867b2 !important;
+  color: #2867b2 !important;
 }
 
 a.is-icon.bugcrowd:hover {
-    color: #f26822 !important;
+  color: #f26822 !important;
 }
 
 /*        content        */
 @media screen and (max-width: 768px) {
-  .content.is-perfect { 
-    font-size: 1rem; 
+  .content.is-perfect {
+    font-size: 1rem;
   }
 
-  pre > code {
+  pre>code {
     font-size: 9pt !important;
   }
 }
 
 @media screen and (min-width: 769px) {
-  .content.is-perfect { 
-    font-size: 1.125rem; 
+  .content.is-perfect {
+    font-size: 1.125rem;
   }
 
-  pre > code {
+  pre>code {
     font-size: 10pt !important;
   }
 }
@@ -276,18 +280,18 @@ pre {
   position: relative;
 }
 
-pre > .button {
+pre>.button {
   opacity: 0;
   transition: opacity .1s ease-out;
-    -moz-transition: opacity .1s ease-out;
-    -webkit-transition: opacity .1s ease-out;
-    -o-transition: opacity .1s ease-out;
+  -moz-transition: opacity .1s ease-out;
+  -webkit-transition: opacity .1s ease-out;
+  -o-transition: opacity .1s ease-out;
   position: absolute !important;
   top: 12px !important;
   right: 10px !important;
 }
 
-pre:hover > .button {
+pre:hover>.button {
   opacity: 1;
 }
 
@@ -326,9 +330,9 @@ $list-item-hover-color: $green-light;
 .is-opaque-on-hover {
   opacity: .6;
   transition: opacity .3s ease-out;
-    -moz-transition: opacity .3s ease-out;
-    -webkit-transition: opacity .3s ease-out;
-    -o-transition: opacity .3s ease-out;
+  -moz-transition: opacity .3s ease-out;
+  -webkit-transition: opacity .3s ease-out;
+  -o-transition: opacity .3s ease-out;
 }
 
 .is-opaque-on-hover:hover {
@@ -359,24 +363,24 @@ img.is-bio:hover {
   margin-bottom: 0px !important;
   background-color: transparent;
   transition: background-color .3s;
-    -moz-transition: background-color .3s;
-    -webkit-transition: background-color .3s;
-    -o-transition: background-color .3s;
+  -moz-transition: background-color .3s;
+  -webkit-transition: background-color .3s;
+  -o-transition: background-color .3s;
 }
 
 .single-post p {
   transition: color .3s;
-    -moz-transition: color .3s;
-    -webkit-transition: color .3s;
-    -o-transition: color .3s;
+  -moz-transition: color .3s;
+  -webkit-transition: color .3s;
+  -o-transition: color .3s;
 }
 
 .single-post .read {
   opacity: 0;
   transition: opacity .1s;
-    -moz-transition: opacity .1s;
-    -webkit-transition: opacity .1s;
-    -o-transition: opacity .1s;
+  -moz-transition: opacity .1s;
+  -webkit-transition: opacity .1s;
+  -o-transition: opacity .1s;
 }
 
 .single-post:hover {
