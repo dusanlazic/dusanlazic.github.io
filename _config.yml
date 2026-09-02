@@ -18,9 +18,9 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Personal website and blog by Dušan Lazić
-tagline: Cybersecurity, DevOps and more cool stuff
-description: Personal website and blog where I document my learning process
+title: Dušan Lazić — Cybersecurity Engineer
+tagline: Cybersecurity engineering, DevOps/SRE and CTFs
+description: Personal website and blog of cybersecurity engineer Dušan Lazić
 baseurl: "" # the subpath of your site, e.g. /blog
 url: https://lazicdusan.com # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  dusanlazic
